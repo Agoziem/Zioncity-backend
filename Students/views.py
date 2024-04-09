@@ -26,8 +26,7 @@ def getStudents(request, school_id, class_id):
         students = Student.objects.filter(student_school=school, student_class=student_class)
         serializer = StudentSerializer(students, many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
-    except Exception as e:
-        print(str(e))
+    except School.DoesNotExist or Class.DoesNotExist:
         return Response('School/Class does not exist',status=status.HTTP_404_NOT_FOUND)
 
 # get Student based on his/her Student ID
@@ -67,11 +66,10 @@ def createStudent(request,school_id, class_id):
 def updateStudent(request, student_id):
     data = request.data
     try:
-
         student = Student.objects.get(id=student_id)
         schoolid = data.get('schoolid')
         classid = data.get('classid')
-        
+
         # update the student's school and class if the school_id and class_id are provided
         try:
             if schoolid:
