@@ -4,23 +4,23 @@
 # admins api endpoints
 # 
 
-#         "academicsessions/",  # get all academic sessions in a school based on its ID
-#         "academicsessions/create/",  # create an academic session in a school based on its ID
-#         "academicsessions/<int:session_id>/",  # get an academic session based on its ID
-#         "academicsessions/<int:session_id>/update/",  # update an academic session based on its ID
-#         "academicsessions/<int:session_id>/delete/",  # delete an academic session based on its ID
+#        "academicsessions/",  # get all academic sessions in a school based on its ID
+#        "academicsessions/create/",  # create an academic session in a school based on its ID
+#        "academicsessions/<int:session_id>/",  # get an academic session based on its ID
+#        "academicsessions/<int:session_id>/update/",  # update an academic session based on its ID
+#        "academicsessions/<int:session_id>/delete/",  # delete an academic session based on its ID
 
-#         "terms/",  # get all terms in an academic session based on its ID
-#         "terms/create/",  # create a term in an academic session based on its ID
-#         "terms/<int:term_id>/",  # get a term based on its ID
-#         "terms/<int:term_id>/update/",  # update a term based on its ID
-#         "terms/<int:term_id>/delete/",  # delete a term based on its ID  
+#        "terms/",  # get all terms in an academic session based on its ID
+#        "terms/create/",  # create a term in an academic session based on its ID
+#        "terms/<int:term_id>/",  # get a term based on its ID
+#        "terms/<int:term_id>/update/",  # update a term based on its ID
+#        "terms/<int:term_id>/delete/",  # delete a term based on its ID  
 
-#        path('classes/', getClasses, name='classes'),
-         #path('classes/create/', createClass, name='create_class'),
-         #path('classes/<int:class_id>/', getClass, name='class'),
-         #path('classes/<int:class_id>/update/', updateClass, name='update_class'),
-         #path('classes/<int:class_id>/delete/', deleteClass, name='delete_class'), 
+#          path('classes/', getClasses, name='classes'),
+        #path('classes/create/', createClass, name='create_class'),
+        #path('classes/<int:class_id>/', getClass, name='class'),
+        #path('classes/<int:class_id>/update/', updateClass, name='update_class'),
+        #path('classes/<int:class_id>/delete/', deleteClass, name='delete_class'), 
 
     #     path('subjects/', getSubjects, name='subjects'),
     #     path('subjects/create/', createSubject, name='create_subject'),
@@ -47,7 +47,11 @@
     # path('subjectallocations/<int:subjectallocation_id>/delete/', deleteSubjectAllocation, name='delete_subject_allocation'),
 
 
-GET http://127.0.0.1:8000/adminsapi/classes/ 
+#  student endpoints
+
+
+GET http://127.0.0.1:8000/adminsapi/subjectallocations/2/
+
 
 ###
 
@@ -55,31 +59,29 @@ POST http://127.0.0.1:8000/adminsapi/subjectallocations/2/create/
 Content-Type: application/json
 
 {
-    "class": "1",
+    "class": "5",
     "subjects": [
-        "3",
-        "4"
+        "1",
+        "2"
     ]
 }
 
 ###
-GET http://127.0.0.1:8000/adminsapi/subjectallocations/2/1
+GET http://127.0.0.1:8000/adminsapi/schools/3/
 
 
 ###
 
-PUT http://127.0.0.1:8000/adminsapi/subjectallocations/1/update/ 
+PUT http://127.0.0.1:8000/adminsapi/academicsessions/4/update/
 Content-Type: application/json
 
 
 {
-    "classname": 2,
-    "subjects": [
-        1,
-        2
-    ]
+    "session":"2024/2025",
+    "startdate": "2024-04-16",
+    "enddate": "2025-04-16"
 }
 
 ###
 
-DELETE http://127.0.0.1:8000/adminsapi/schools/4/delete/
+DELETE http://127.0.0.1:8000/adminsapi/subjectallocations/4/delete/

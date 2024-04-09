@@ -104,13 +104,20 @@ def updateAdmin(request, admin_id):
     data = request.data
     try:
         admin = Administrator.objects.get(id=admin_id)
-        serializer = AdminSerializer(instance=admin, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        school_id = data.get('school_id')
+        if school_id:
+            admin.school = School.objects.get(id=school_id)
+            
+        fields_to_update = ['adminfirstname', 'adminlastname', 'adminphonenumber', 'adminemail', 'adminphoto', 'adminrole']
+        for field in fields_to_update:
+            if field in data:
+                setattr(admin, field, data[field])
+        admin.save()
+        serializer = AdminSerializer(admin, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Administrator.DoesNotExist:
         return Response('Admin not found', status=status.HTTP_404_NOT_FOUND)
+
     
 
 @api_view(['DELETE'])
@@ -124,3 +131,4 @@ def deleteAdmin(request, admin_id):
 
 # /////////////////////////////////////////////////////////////////////////////////////////
 
+# 

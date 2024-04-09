@@ -34,7 +34,11 @@ def createAcademicSession(request):
     term_ids = data.get('terms', [])
     terms = Term.objects.filter(id__in=term_ids)
     try:
-        academic_session = AcademicSession.objects.create(session=data['session'])
+        academic_session = AcademicSession.objects.create(
+            session=data['session'],
+            startdate=data.get('startdate', None),
+            enddate=data.get('enddate', None)
+            )
         academic_session.terms.add(*terms)
         serializer = AcademicSessionSerializer(academic_session)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -48,13 +52,25 @@ def updateAcademicSession(request, session_id):
     data = request.data
     try:
         academicSession = AcademicSession.objects.get(id=session_id)
-        serializer = AcademicSessionSerializer(instance=academicSession, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Update fields if provided 
+        fields_to_update = ['session','startdate', 'enddate']
+        for field in fields_to_update:
+            if field in data:
+                setattr(academicSession, field, data[field])
+
+        # Update terms if provided
+        terms_ids = data.get('terms', [])
+        if terms_ids:
+            terms = Term.objects.filter(id__in=terms_ids)
+            academicSession.terms.set(terms)
+        
+        academicSession.save()
+        serializer = AcademicSessionSerializer(academicSession)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except AcademicSession.DoesNotExist:
         return Response('Academic Session not found', status=status.HTTP_404_NOT_FOUND)
+
     
 @api_view(['DELETE'])
 def deleteAcademicSession(request, session_id):

@@ -54,15 +54,27 @@ def createSubjectAllocation(request, school_id):
 @api_view(['PUT'])
 def updateSubjectAllocation(request, subjectallocation_id):
     data = request.data
-    print(data)
     try:
         subjectAllocation = Subjectallocation.objects.get(id=subjectallocation_id)
-        serializer = SubjectallocationSerializer(instance=subjectAllocation, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            print(serializer.data)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        school_id = data.get('school_id')
+        if school_id:
+            school = School.objects.get(id=school_id)
+            subjectAllocation.school = school
+
+        classname_id = data.get('classname_id')
+        if classname_id:
+            classname = Class.objects.get(id=classname_id)
+            subjectAllocation.classname = classname
+
+        subject_ids = data.get('subjects', [])
+        if subject_ids:
+            subjects = Subject.objects.filter(id__in=subject_ids)
+            subjectAllocation.subjects.set(subjects)
+
+        # Save the updated Subjectallocation instance
+        subjectAllocation.save()
+        serializer = SubjectallocationSerializer(subjectAllocation)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except Subjectallocation.DoesNotExist:
         return Response('Subject Allocation not found', status=status.HTTP_404_NOT_FOUND)
 

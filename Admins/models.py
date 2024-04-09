@@ -14,6 +14,8 @@ class Term(models.Model):
 class AcademicSession(models.Model):
 	session = models.CharField(max_length=100, blank=True)
 	terms = models.ManyToManyField('Term', blank=True)
+	startdate = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
+	enddate = models.DateField(auto_now=False, auto_now_add=False, blank=True, null=True)
 
 	def __str__(self):
 		return str(self.session)

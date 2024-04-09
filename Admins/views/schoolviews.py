@@ -16,7 +16,8 @@ def getSchools(request):
         schools = School.objects.all()
         serializer = SchoolSerializer(schools, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    except:
+    except Exception as e :
+        print(str(e))
         return Response('No Schools found', status=status.HTTP_404_NOT_FOUND)
 
 @api_view(['GET'])
@@ -54,7 +55,7 @@ def createSchool(request):
         school.session.add(*sessions)
         school.Subjects.add(*subjects)
         serializer = SchoolSerializer(school, many=False)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
     except Exception as e:
         print(str(e))
         return Response('School not created and error occurred', status=status.HTTP_400_BAD_REQUEST)
@@ -64,11 +65,35 @@ def updateSchool(request, school_id):
     data = request.data
     try:
         school = School.objects.get(id=school_id)
-        serializer = SchoolSerializer(instance=school, data=request.data)
-        if serializer.is_valid():
-            serializer.save()
-            return Response(serializer.data,status=status.HTTP_200_OK)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+        # Update classes if provided
+        classesid = data.get('class', []) 
+        if classesid:
+            classes_ = Class.objects.filter(id__in=classesid)
+            school.classes.set(classes_)
+
+        # Update sessions if provided
+        sessionsid = data.get('session', [])
+        if sessionsid:
+            sessions = AcademicSession.objects.filter(id__in=sessionsid)
+            school.session.set(sessions)
+
+        # Update subjects if provided
+        subjectsid = data.get('subject', [])
+        if subjectsid:
+            subjects = Subject.objects.filter(id__in=subjectsid)
+            school.Subjects.set(subjects)
+
+        # Update other fields
+        fields_to_update = ['Schoollogo', 'Schoolname', 'Schoolofficialline', 'Schoolmotto', 'Schoollocation',
+                            'Facebookpage', 'Twitterhandle', 'Whatsapplink', 'Emailaddress']
+        for field in fields_to_update:
+            if field in data:
+                setattr(school, field, data[field])
+        
+        school.save()
+        serializer = SchoolSerializer(school, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     except School.DoesNotExist:
         return Response('School not found', status=status.HTTP_404_NOT_FOUND)
 
