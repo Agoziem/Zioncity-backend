@@ -48,40 +48,44 @@
 
 
 #  student endpoints
+#          "<int:school_id>/<int:class_id>/", # get students based on the School ID and Class ID
+#         "create/<int:school_id>/<int:class_id>/", # create a student based on the School ID and Class ID
+#         "<int:student_id>/", # get a student based on his/her Student ID
+#         "<int:student_id>/update/", # update a student based on his/her Student ID
+#         "<int:student_id>/delete/",
 
-
-GET http://127.0.0.1:8000/adminsapi/subjectallocations/2/
+GET http://127.0.0.1:8000/studentsapi/2/2/
 
 
 ###
 
-POST http://127.0.0.1:8000/adminsapi/subjectallocations/2/create/ 
+POST http://127.0.0.1:8000/studentsapi/create/2/2/
 Content-Type: application/json
 
 {
-    "class": "5",
-    "subjects": [
-        "1",
-        "2"
-    ]
+    "student_name": "Ndukwe jannetse",
+    "Sex": "Female",
+    "student_Photo": null
 }
 
 ###
-GET http://127.0.0.1:8000/adminsapi/schools/3/
+GET http://127.0.0.1:8000/studentsapi/3/
 
 
 ###
 
-PUT http://127.0.0.1:8000/adminsapi/academicsessions/4/update/
+PUT http://127.0.0.1:8000/studentsapi/2/update/
 Content-Type: application/json
 
 
 {
-    "session":"2024/2025",
-    "startdate": "2024-04-16",
-    "enddate": "2025-04-16"
+    "student_name": "Ndukwe kosiso",
+    "Sex": "Female",
+    "student_Photo": null,
+    "schoolid": 3,
+    "classid": 2
 }
 
 ###
 
-DELETE http://127.0.0.1:8000/adminsapi/subjectallocations/4/delete/
+DELETE http://127.0.0.1:8000/studentsapi/4/delete/

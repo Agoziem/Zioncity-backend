@@ -3,6 +3,14 @@ from .models import Student
 
 
 class StudentSerializer(serializers.ModelSerializer):
+    studentclass = serializers.SerializerMethodField()
+    student_school = serializers.SerializerMethodField()
     class Meta:
         model = Student
-        fields = ('id', 'student_name', 'Sex', 'student_class','student_id','student_pin','student_Photo','student_school')
+        exclude = ['student_class']
+
+    def get_studentclass(self, obj):
+        return {"id":obj.student_class.id,"class_":obj.student_class.Class}
+    
+    def get_student_school(self, obj):
+        return {"id":obj.student_school.id,"school":obj.student_school.Schoolname}

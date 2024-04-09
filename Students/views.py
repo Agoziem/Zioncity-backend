@@ -4,64 +4,105 @@ from .models import Student
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from Admins.models import School,Class
+from rest_framework import status
 
 @api_view(['GET'])
 def getRoutes(request):
     routes = [
-        "studentsapi/<int:school_id>/<int:class_id>/", # get students based on the School ID and Class ID
-        "studentsapi/create/<int:school_id>/<int:class_id>/", # create a student based on the School ID and Class ID
-        "studentsapi/<int:student_id>/", # get a student based on his/her Student ID
-        "studentsapi/<int:student_id>/update/", # update a student based on his/her Student ID
-        "studentsapi/<int:student_id>/delete/", # delete a student based on his/her Student ID
+        "<int:school_id>/<int:class_id>/", # get students based on the School ID and Class ID
+        "create/<int:school_id>/<int:class_id>/", # create a student based on the School ID and Class ID
+        "<int:student_id>/", # get a student based on his/her Student ID
+        "<int:student_id>/update/", # update a student based on his/her Student ID
+        "<int:student_id>/delete/", # delete a student based on his/her Student ID
     ]
     return Response(routes)
 
 # get students based on the School ID and Class ID
 @api_view(['GET'])
 def getStudents(request, school_id, class_id):
-    school = School.objects.get(id=school_id)
-    student_class = Class.objects.get(id=class_id)
-    students = Student.objects.filter(student_school=school, student_class=student_class)
-    serializer = StudentSerializer(students, many=True)
-    return Response(serializer.data)
+    try:
+        school = School.objects.get(id=school_id)
+        student_class = Class.objects.get(id=class_id)
+        students = Student.objects.filter(student_school=school, student_class=student_class)
+        serializer = StudentSerializer(students, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except Exception as e:
+        print(str(e))
+        return Response('School/Class does not exist',status=status.HTTP_404_NOT_FOUND)
 
 # get Student based on his/her Student ID
 @api_view(['GET'])
 def getStudent(request, student_id):
-    student = Student.objects.get(id=student_id)
-    serializer = StudentSerializer(student, many=False)
-    return Response(serializer.data)
+    try:
+        student = Student.objects.get(id=student_id)
+        serializer = StudentSerializer(student, many=False)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except Student.DoesNotExist:
+        return Response('Student does not exist',status=status.HTTP_404_NOT_FOUND)
 
 
 # create a student based on the School ID and Class ID
 @api_view(['POST'])
 def createStudent(request,school_id, class_id):
-    school = School.objects.get(id=school_id)
-    student_class = Class.objects.get(id=class_id)
-    data = request.data
-    student = Student.objects.create(
-        student_name=data['student_name'],
-        Sex=data['Sex'],
-        student_Photo=data['student_Photo'],
-        student_school=school,
-        student_class=student_class,
-    )
-    serializer = StudentSerializer(student, many=False)
-    return Response(serializer.data)
+    try:
+        school = School.objects.get(id=school_id)
+        student_class = Class.objects.get(id=class_id)
+        data = request.data
+        student = Student.objects.create(
+            student_name=data['student_name'],
+            Sex=data['Sex'],
+            student_Photo=data['student_Photo'],
+            student_school=school,
+            student_class=student_class,
+        )
+        serializer = StudentSerializer(student, many=False)
+        return Response(serializer.data)
+    except School.DoesNotExist or Class.DoesNotExist:
+        return Response('School/Class does not exist in the Database',status=status.HTTP_404_NOT_FOUND)
+
+    
 
 # update a student based on his/her Student ID
 @api_view(['PUT'])
 def updateStudent(request, student_id):
     data = request.data
-    student = Student.objects.get(id=student_id)
-    serializer = StudentSerializer(instance=student, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
+    try:
+
+        student = Student.objects.get(id=student_id)
+        schoolid = data.get('schoolid')
+        classid = data.get('classid')
+        
+        # update the student's school and class if the school_id and class_id are provided
+        try:
+            if schoolid:
+                school = School.objects.get(id=schoolid)
+                student.student_school = school
+
+            if classid:
+                student_class = Class.objects.get(id=classid)
+                student.student_class = student_class
+
+        except School.DoesNotExist or Class.DoesNotExist:
+            return Response('School/Class does not exist',status=status.HTTP_404_NOT_FOUND)
+
+        # update the other fields
+        fields_to_update = ['student_name','Sex',"student_Photo"]
+        for field in fields_to_update:
+            if field in data:
+                setattr(student,field,data[field])
+        student.save()
+        serializer = StudentSerializer(student, many=False)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except Student.DoesNotExist:
+        return Response('Student does not exist',status=status.HTTP_404_NOT_FOUND)
 
 # delete a student based on his/her Student ID
 @api_view(['DELETE'])
 def deleteStudent(request,student_id):
-    student = Student.objects.get(id=student_id)
-    student.delete()
-    return Response('Student deleted')
+    try:
+        student = Student.objects.get(id=student_id)
+        student.delete()
+        return Response('Student deleted Successfully',status=status.HTTP_200_OK)
+    except Student.DoesNotExist:
+        return Response('Student does not exist',status=status.HTTP_404_NOT_FOUND)
+
