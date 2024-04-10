@@ -55,7 +55,6 @@ def createTeacher(request, school_id):
             role=data['role'],
             school=school,
         )
-
         try:
             # assign the class the teacher is forming
             classid = data.get('classFormed')
@@ -97,9 +96,8 @@ def updateTeacher(request, teacher_id):
     data = request.data
     try:
         teacher = Teacher.objects.get(id=teacher_id)
-
         try:
-            # update the Formteachers Class if one
+            # update the Formteachers Class if she/he is a Formteacher
             classid = data.get('classFormed')
             is_formteacher = data.get('is_formteacher')
             if is_formteacher and classid:
@@ -111,13 +109,13 @@ def updateTeacher(request, teacher_id):
                 teacher.is_formteacher = False
                 teacher.classFormed = classFormed
 
-            # update the teachers classes
+            # update the teachers classes field
             classes_taughtid = data.get('classes_taught',[])
             if classes_taughtid:
                 classes_taught = Class.objects.filter(id__in=classes_taughtid)
                 teacher.classes_taught.set(classes_taught)
 
-            # update the teachers subjects
+            # update the teachers subjects field
             subjects_taughtid = data.get('subjects_taught',[])
             if subjects_taughtid:
                 subjects_taught = Subject.objects.filter(id__in=subjects_taughtid)
@@ -141,6 +139,10 @@ def updateTeacher(request, teacher_id):
 
 @api_view(['DELETE'])
 def deleteTeacher(request, teacher_id):
-    teacher = Teacher.objects.get(id=teacher_id)
-    teacher.delete()
-    return Response('Teacher deleted')
+    try:
+        teacher = Teacher.objects.get(id=teacher_id)
+        teacher.delete()
+        return Response('Teacher deleted Successfully')
+    except Teacher.DoesNotExist:
+        return Response('Teacher does not exist', status=status.HTTP_404_NOT_FOUND)
+    

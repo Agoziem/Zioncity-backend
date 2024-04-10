@@ -62,13 +62,14 @@
 #         "<int:teacher_id>/update/",  # update a teacher based on his/her Teacher ID
 #         "<int:teacher_id>/delete/",  # delete a teacher based on his/her Teacher ID
 
+
 # get all entries
 GET http://127.0.0.1:8000/teachersapi/2
 
 
 # get single entry
 ###
-GET http://127.0.0.1:8000/teachersapi/teacher/4
+GET http://127.0.0.1:8000/teachersapi/teacher/3
 
 
 # create an entry
