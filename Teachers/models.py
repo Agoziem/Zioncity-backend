@@ -1,4 +1,5 @@
 from django.db import models
+from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 import random
 from Admins.models import Class, Subject, School
@@ -11,15 +12,16 @@ ROLE_CHOICES = [
 
 # model for teachers
 class Teacher(models.Model):
-	user = models.OneToOneField(User, on_delete=models.CASCADE, default=2)  
+	user = models.OneToOneField(User, on_delete=models.CASCADE, default=2,blank=True,null=True)  
 	firstName= models.CharField(max_length= 200, blank=True,default='None')
 	lastName= models.CharField(max_length= 200, blank=True, default='None')
 	phone_number= models.CharField(max_length= 200, blank=True)
 	email= models.EmailField(max_length= 200, blank=True)
 	teachers_id=models.CharField(max_length= 200, blank=True)
 	role= models.CharField(max_length= 200, blank=True , default="Teacher",choices=ROLE_CHOICES )
-	subjects_taught=models.ManyToManyField(Subject)
-	classes_taught=models.ManyToManyField(Class,related_name='assigned_classes')
+	subjects_taught=models.ManyToManyField(Subject,blank=True)
+	classes_taught=models.ManyToManyField(Class,related_name='assigned_classes',blank=True)
+	is_formteacher=models.BooleanField(default=False)
 	classFormed = models.ForeignKey(Class,on_delete=models.CASCADE, blank=True, null=True )
 	school = models.ForeignKey(School,on_delete=models.CASCADE, blank=True, null=True )
 	headshot=models.ImageField(upload_to='assets/TeachersProfileimages', blank=True)
@@ -27,7 +29,7 @@ class Teacher(models.Model):
 	
 	
 	def __str__(self):
-		return str(self.FirstName)
+		return f"{self.firstName} {self.lastName} - {self.teachers_id}"
 
 	# return the URL of the teacher's photo
 	@property
@@ -41,13 +43,23 @@ class Teacher(models.Model):
 
 	# save method to generate teachers_id
 	def save(self, *args, **kwargs):
-		if self.id:
-			super().save(*args, **kwargs) 
-		else:
-			while not self.teachers_id:
+		if not self.id:  # Check if it's a new instance
+			attempts = 0
+			while attempts < 5:  # Limit the number of attempts to avoid infinite loop
 				random_pin = str(random.randint(1000, 9999))
-				Application_id = f"teacher/{random_pin}"
-				object_with_similar_Application_id = Teacher.objects.filter(teachers_id=random_pin)
-				if not object_with_similar_Application_id:
-					self.teachers_id = Application_id
-			super().save(*args, **kwargs)
+				teachers_id = f"teacher/{random_pin}"
+				if not Teacher.objects.filter(teachers_id=teachers_id).exists():
+					self.teachers_id = teachers_id
+					break
+				attempts += 1
+			else:
+				raise ValueError("Unable to generate a unique teachers_id")
+			username = f"@{str(self.firstName)}{str(self.lastName)}"
+			print(username)
+			user = User.objects.create_user(username=username, password=self.teachers_id)
+			user.is_staff = True
+			user.save()
+			self.user = user
+			Token.objects.create(user=user)
+			
+		super().save(*args, **kwargs)

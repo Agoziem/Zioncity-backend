@@ -53,6 +53,7 @@ INSTALLED_APPS = [
     'Attendance',
     'Payments',
     'rest_framework',
+    'rest_framework.authtoken',
     'corsheaders',
 ]
 

@@ -3,7 +3,9 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from .models import Teacher
 from .serializers import TeacherSerializer
-from Admins.models import School
+from Admins.models import School, Class, Subject
+from rest_framework import status
+from django.db import IntegrityError
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -19,43 +21,123 @@ def getRoutes(request):
 
 @api_view(['GET'])
 def getTeachers(request, school_id):
-    teachers = Teacher.objects.filter(school=school_id)
-    serializer = TeacherSerializer(teachers, many=True)
-    return Response(serializer.data)
+    try:
+        school = School.objects.get(id=school_id)
+        teachers = Teacher.objects.filter(school=school)
+        serializer = TeacherSerializer(teachers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except School.DoesNotExist:
+        return Response('School does not exist', status=status.HTTP_404_NOT_FOUND)
+    
 
 @api_view(['GET'])
 def getTeacher(request, teacher_id):
-    teacher = Teacher.objects.get(id=teacher_id)
-    serializer = TeacherSerializer(teacher, many=False)
-    return Response(serializer.data)
+    try:
+        teacher = Teacher.objects.get(id=teacher_id)
+        serializer = TeacherSerializer(teacher, many=False)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    except Teacher.DoesNotExist:
+        return Response('Teacher does not exist', status=status.HTTP_404_NOT_FOUND)
+
+
 
 
 @api_view(['POST'])
-def createTeacher(request, school_id, class_id):
+def createTeacher(request, school_id):
     data = request.data
-    school = School.objects.get(id=school_id)
-    teacher = Teacher.objects.create(
-        firstName=data['firstName'],
-        lastName=data['lastName'],
-        phone_number=data['phone_number'],
-        email=data['email'],
-        role=data['role'],
-        subjects_taught=data['subjects_taught'],
-        classes_taught=data['classes_taught'],
-        classFormed=data['classFormed'],
-        school=school_id,
-    )
-    serializer = TeacherSerializer(teacher, many=False)
-    return Response(serializer.data)
+    try:
+        school = School.objects.get(id=school_id)
+        teacher = Teacher.objects.create(
+            firstName=data['firstName'],
+            lastName=data['lastName'],
+            phone_number=data['phone_number'],
+            email=data['email'],
+            role=data['role'],
+            school=school,
+        )
 
+        try:
+            # assign the class the teacher is forming
+            classid = data.get('classFormed')
+            is_formteacher = data.get('is_formteacher')
+            if is_formteacher and classid:
+                classFormed = Class.objects.get(id=classid)
+                teacher.is_formteacher = is_formteacher
+                teacher.classFormed = classFormed
+            else:
+                classFormed = None
+                teacher.is_formteacher = False
+                teacher.classFormed = classFormed
+            
+            # assign the classes the teacher is teaching
+            classes_taughtid = data.get('classes_taught',[])
+            if classes_taughtid:
+                classes_taught = Class.objects.filter(id__in=classes_taughtid)
+                teacher.classes_taught.add(*classes_taught)
+            
+            # assign the subjects the teacher is teaching
+            subjects_taughtid = data.get('subjects_taught',[])
+            if subjects_taughtid:
+                subjects_taught = Subject.objects.filter(id__in=subjects_taughtid)
+                teacher.subjects_taught.add(*subjects_taught)
+        except Class.DoesNotExist:
+            return Response('Classformed does not exist', status=status.HTTP_404_NOT_FOUND)
+
+        teacher.save()
+        serializer = TeacherSerializer(teacher, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    except Exception as e:
+        return Response("A user with the same Firstname & Lastname already exist", status=status.HTTP_404_NOT_FOUND)
+
+
+
+# view for updating the Teachers details
 @api_view(['PUT'])
 def updateTeacher(request, teacher_id):
     data = request.data
-    teacher = Teacher.objects.get(id=teacher_id)
-    serializer = TeacherSerializer(instance=teacher, data=request.data)
-    if serializer.is_valid():
-        serializer.save()
-    return Response(serializer.data)
+    try:
+        teacher = Teacher.objects.get(id=teacher_id)
+
+        try:
+            # update the Formteachers Class if one
+            classid = data.get('classFormed')
+            is_formteacher = data.get('is_formteacher')
+            if is_formteacher and classid:
+                classFormed = Class.objects.get(id=classid)
+                teacher.is_formteacher = is_formteacher
+                teacher.classFormed = classFormed
+            else:
+                classFormed = None
+                teacher.is_formteacher = False
+                teacher.classFormed = classFormed
+
+            # update the teachers classes
+            classes_taughtid = data.get('classes_taught',[])
+            if classes_taughtid:
+                classes_taught = Class.objects.filter(id__in=classes_taughtid)
+                teacher.classes_taught.set(classes_taught)
+
+            # update the teachers subjects
+            subjects_taughtid = data.get('subjects_taught',[])
+            if subjects_taughtid:
+                subjects_taught = Subject.objects.filter(id__in=subjects_taughtid)
+                teacher.subjects_taught.set(subjects_taught)
+        except Class.DoesNotExist:
+            return Response('Classformed does not exist', status=status.HTTP_404_NOT_FOUND)
+
+        # update other fields
+        other_fields = ['firstName', 'lastName', 'phone_number', 'email', 'role', 'school']
+        for field in other_fields:
+            if field in data:
+                setattr(teacher, field, data[field])
+        teacher.save()
+        serializer = TeacherSerializer(teacher, many=False)
+        return Response(serializer.data)
+    except Teacher.DoesNotExist:
+        return Response('Teacher does not exist', status=status.HTTP_404_NOT_FOUND)
+
+
+
 
 @api_view(['DELETE'])
 def deleteTeacher(request, teacher_id):
