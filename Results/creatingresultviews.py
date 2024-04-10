@@ -12,20 +12,20 @@ import json
 @api_view(['GET'])
 def getcreatingResultRoutes(request):
     routes = [
-        '/resultapi/getResults/',
-        '/resultapi/updateResult/<int:result_id>',
-        '/resultapi/deleteResult/<int:result_id>',
-        '/resultapi/postResults/',
+        '/getResults/',
+        '/updateResult/<int:result_id>',
+        '/deleteResult/<int:result_id>',
+        '/postResults/',
 
-        '/resultapi/getResultSummaries/',
-        '/resultapi/postResultSummaries/',
+        '/getResultSummaries/',
+        '/postResultSummaries/',
 
-        '/resultapi/getAnnualResults/',
-        '/resultapi/updateAnnualResult/<int:result_id>',
+        '/getAnnualResults/',
+        '/updateAnnualResult/<int:result_id>',
         '/resultapi/postAnnualResults/',
 
-        '/resultapi/getAnnualResultSummaries/',
-        '/resultapi/postAnnualResultSummaries/',
+        '/getAnnualResultSummaries/',
+        '/postAnnualResultSummaries/',
 
     ]
     return Response(routes)

@@ -1,0 +1,57 @@
+
+# # Results endpoints
+#         '/getResults/',
+#         '/updateResult/<int:result_id>',
+#         '/deleteResult/<int:result_id>',
+#         '/postResults/',
+
+#         '/getResultSummaries/',
+#         '/postResultSummaries/',
+
+#         '/getAnnualResults/',
+#         '/updateAnnualResult/<int:result_id>',
+#         '/resultapi/postAnnualResults/',
+
+#         '/getAnnualResultSummaries/',
+#         '/postAnnualResultSummaries/',
+
+
+# get all entries for a School
+GET http://127.0.0.1:8000/studentsapi/2/
+
+
+# get all entries for a Particular class in a School
+GET http://127.0.0.1:8000/studentsapi/2/3/
+
+
+# get single entry
+###
+GET http://127.0.0.1:8000/studentsapi/student/6
+
+
+# create an entry
+###
+POST http://127.0.0.1:8000/studentsapi/create/2/3/
+Content-Type: application/json
+
+{
+    "firstname": "Chidimma",
+    "surname": "Ekwunife",
+    "othername": "",
+    "sex": "Female"
+  }
+
+###
+# update an entry
+PUT http://127.0.0.1:8000/studentsapi/update/1/
+Content-Type: application/json
+
+
+{
+    "othername": "Ifeanyi",
+    "sex": "Male"
+  }
+
+###
+# delete an entry
+DELETE http://127.0.0.1:8000/studentsapi/delete/6/

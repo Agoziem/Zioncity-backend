@@ -1,6 +1,3 @@
-
-
-
 # admins api endpoints
 # 
 
@@ -47,68 +44,42 @@
     # path('subjectallocations/<int:subjectallocation_id>/delete/', deleteSubjectAllocation, name='delete_subject_allocation'),
 
 
-#  student endpoints
-#          "<int:school_id>/<int:class_id>/", # get students based on the School ID and Class ID
-#         "create/<int:school_id>/<int:class_id>/", # create a student based on the School ID and Class ID
-#         "<int:student_id>/", # get a student based on his/her Student ID
-#         "<int:student_id>/update/", # update a student based on his/her Student ID
-#         "<int:student_id>/delete/",
+# get all entries for a School
+GET http://127.0.0.1:8000/studentsapi/2/
 
 
-# # Teachers endpoints
-#          "<int:school_id>/",  # get all teachers based on the School ID and Class ID
-#         "create/<int:school_id>/",  # create a teacher based on the School ID and Class ID
-#         "teacher/<int:teacher_id>/",  # get a teacher based on his/her Teacher ID
-#         "<int:teacher_id>/update/",  # update a teacher based on his/her Teacher ID
-#         "<int:teacher_id>/delete/",  # delete a teacher based on his/her Teacher ID
-
-
-# get all entries
-GET http://127.0.0.1:8000/teachersapi/2
+# get all entries for a Particular class in a School
+GET http://127.0.0.1:8000/studentsapi/2/3/
 
 
 # get single entry
 ###
-GET http://127.0.0.1:8000/teachersapi/teacher/3
+GET http://127.0.0.1:8000/studentsapi/student/6
 
 
 # create an entry
 ###
-POST http://127.0.0.1:8000/teachersapi/create/2/
+POST http://127.0.0.1:8000/studentsapi/create/2/3/
 Content-Type: application/json
 
 {
-   "firstName":"Ndukwe",
-    "lastName" : "Winner",
-    "phone_number": "08012345678",
-    "email": "ndukwekosiso@gmail.com",
-    "role":"Formteacher",
-    "subjects_taught":[
-        2,
-        3
-    ],
-    "classes_taught":[
-        2,
-        3
-    ],
-    "is_formteacher": true,
-    "classFormed": 2,
-    "headshot": null
-}
-
+    "firstname": "Chidimma",
+    "surname": "Ekwunife",
+    "othername": "",
+    "sex": "Female"
+  }
 
 ###
 # update an entry
-PUT http://127.0.0.1:8000/teachersapi/4/update/
+PUT http://127.0.0.1:8000/studentsapi/update/1/
 Content-Type: application/json
 
 
 {
-   "is_formteacher": true,
-    "classFormed": 1,
-    "email":"winnerndukwe90@gmail"
-}
+    "othername": "Ifeanyi",
+    "sex": "Male"
+  }
 
 ###
 # delete an entry
-DELETE http://127.0.0.1:8000/studentsapi/4/delete/
+DELETE http://127.0.0.1:8000/studentsapi/delete/6/

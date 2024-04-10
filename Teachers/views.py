@@ -48,11 +48,11 @@ def createTeacher(request, school_id):
     try:
         school = School.objects.get(id=school_id)
         teacher = Teacher.objects.create(
-            firstName=data['firstName'],
-            lastName=data['lastName'],
-            phone_number=data['phone_number'],
-            email=data['email'],
-            role=data['role'],
+            firstName=data.get('firstName',''),
+            lastName=data.get('lastName',''),
+            phone_number=data.get('phone_number',''),
+            email=data.get('email',''),
+            role=data.get('role',''),
             school=school,
         )
         try:

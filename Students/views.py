@@ -17,6 +17,18 @@ def getRoutes(request):
     ]
     return Response(routes)
 
+
+# get all students based on the School ID
+@api_view(['GET'])
+def getallStudents(request, school_id):
+    try:
+        school = School.objects.get(id=school_id)
+        students = Student.objects.filter(student_school=school)
+        serializer = StudentSerializer(students, many=True)
+        return Response(serializer.data,status=status.HTTP_200_OK)
+    except School.DoesNotExist:
+        return Response('School does not exist',status=status.HTTP_404_NOT_FOUND)
+    
 # get students based on the School ID and Class ID
 @api_view(['GET'])
 def getStudents(request, school_id, class_id):
@@ -27,7 +39,7 @@ def getStudents(request, school_id, class_id):
         serializer = StudentSerializer(students, many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
     except School.DoesNotExist or Class.DoesNotExist:
-        return Response('School/Class does not exist',status=status.HTTP_404_NOT_FOUND)
+        return Response('School or Class does not exist',status=status.HTTP_404_NOT_FOUND)
 
 # get Student based on his/her Student ID
 @api_view(['GET'])
@@ -48,12 +60,15 @@ def createStudent(request,school_id, class_id):
         student_class = Class.objects.get(id=class_id)
         data = request.data
         student = Student.objects.create(
-            student_name=data['student_name'],
-            Sex=data['Sex'],
-            student_Photo=data['student_Photo'],
+            firstname=data.get('firstname',''),
+            surname=data.get('surname',''),
+            othername=data.get('othername',''),
+            sex=data.get('sex',''),
+            student_Photo=data.get('student_Photo',''),
             student_school=school,
             student_class=student_class,
         )
+        
         serializer = StudentSerializer(student, many=False)
         return Response(serializer.data)
     except School.DoesNotExist or Class.DoesNotExist:
@@ -84,7 +99,7 @@ def updateStudent(request, student_id):
             return Response('School/Class does not exist',status=status.HTTP_404_NOT_FOUND)
 
         # update the other fields
-        fields_to_update = ['student_name','Sex',"student_Photo"]
+        fields_to_update = ['firstname',"surname","othername",'sex',"student_Photo"]
         for field in fields_to_update:
             if field in data:
                 setattr(student,field,data[field])

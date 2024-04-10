@@ -4,12 +4,13 @@ from django.contrib.auth.models import User
 import random
 from Admins.models import Class, Subject, School
 
+
 ROLE_CHOICES = [
         ('Teacher', 'Teacher'),
         ('Formteacher', 'Formteacher'),
     ]
 
-
+# 
 # model for teachers
 class Teacher(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE, default=2,blank=True,null=True)  
@@ -23,7 +24,7 @@ class Teacher(models.Model):
 	classes_taught=models.ManyToManyField(Class,related_name='assigned_classes',blank=True)
 	is_formteacher=models.BooleanField(default=False)
 	classFormed = models.ForeignKey(Class,on_delete=models.CASCADE, blank=True, null=True )
-	school = models.ForeignKey(School,on_delete=models.CASCADE, blank=True, null=True )
+	school = models.ForeignKey(School,on_delete=models.CASCADE, blank=False)
 	headshot=models.ImageField(upload_to='assets/TeachersProfileimages', blank=True)
 	
 	
@@ -41,7 +42,7 @@ class Teacher(models.Model):
 		return url
 	
 
-	# save method to generate teachers_id
+	# generate teachers_id & create a user
 	def save(self, *args, **kwargs):
 		if not self.id:  # Check if it's a new instance
 			attempts = 0
@@ -54,8 +55,7 @@ class Teacher(models.Model):
 				attempts += 1
 			else:
 				raise ValueError("Unable to generate a unique teachers_id")
-			username = f"@{str(self.firstName)}{str(self.lastName)}"
-			print(username)
+			username = f"@{str(self.firstName)}{str(self.lastName)}{random_pin}"
 			user = User.objects.create_user(username=username, password=self.teachers_id)
 			user.is_staff = True
 			user.save()
@@ -63,3 +63,12 @@ class Teacher(models.Model):
 			Token.objects.create(user=user)
 			
 		super().save(*args, **kwargs)
+
+	# delete the user when the teacher is deleted
+	def delete(self, *args, **kwargs):
+		if self.user:
+			user = User.objects.filter(id=self.user.id).first()
+			if user:
+				user.delete()
+		super().delete(*args, **kwargs)
+

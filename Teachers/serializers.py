@@ -19,7 +19,7 @@ class TeacherSerializer(serializers.ModelSerializer):
         fields = '__all__'
         
     def get_user(self, obj):
-        return obj.user.username
+        return {"id":obj.user.id,"username":obj.user.username}
     
     def get_classes_taught(self, obj):
         return [{'id': class_taught.id, 'name': class_taught.Class} for class_taught in obj.classes_taught.all()]
