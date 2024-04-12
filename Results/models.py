@@ -1,8 +1,8 @@
 from django.db import models
 from Students.models import Student
-from Admins.models import Class,Subject,AcademicSession,Term
+from Admins.models import Class,Subject,AcademicSession,Term,School
 
-# Create your models here.
+#Model for Students Results Summary
 class ResultSummary(models.Model):
 	Student_name=models.ForeignKey(Student,on_delete=models.CASCADE)
 	TotalScore=models.CharField(max_length=100, blank=True,null=True , default="-")
@@ -12,18 +12,20 @@ class ResultSummary(models.Model):
 	Remark=models.CharField(max_length=100, blank=True,null=True , default="-")
 	Term=models.ForeignKey(Term,on_delete=models.CASCADE,blank=True,null=True)
 	AcademicSession=models.ForeignKey(AcademicSession,on_delete=models.CASCADE,blank=True,null=True)
+	published = models.BooleanField(default=False)
 
 
 	def __str__(self):
-		return str(self.Student_name.student_name+"-"+self.Student_name.student_class.Class)
-	
+		return str(self.Student_name.firstname+"-"+self.Student_name.student_class.Class+"-"+self.Term.term+"-"+self.AcademicSession.session)
+
+#Model for Students Subject Results
 class SubjectResult(models.Model):
 	student = models.ForeignKey(Student,on_delete=models.CASCADE)
-	student_class=models.ForeignKey(Class,on_delete=models.CASCADE, blank=True,null=True,default=1)
 	Subject= models.ForeignKey(Subject,on_delete=models.CASCADE)
 	FirstTest= models.CharField(max_length=100, blank=True,null=True , default="-")
 	FirstAss= models.CharField(max_length=100, blank=True,null=True , default="-")
 	MidTermTest= models.CharField(max_length=100, blank=True,null=True , default="-")
+	Project= models.CharField(max_length=100, blank=True,null=True , default="-")
 	SecondAss= models.CharField(max_length=100, blank=True,null=True , default="-")
 	SecondTest= models.CharField(max_length=100, blank=True,null=True , default="-")
 	CA= models.CharField(max_length=100, blank=True,null=True , default="-")
@@ -34,15 +36,19 @@ class SubjectResult(models.Model):
 	Remark=models.CharField(max_length= 100, blank=True,null=True , default="-")
 	Term=models.ForeignKey(Term,on_delete=models.CASCADE,blank=True,null=True)
 	AcademicSession=models.ForeignKey(AcademicSession,on_delete=models.CASCADE,blank=True,null=True)
+	student_class=models.ForeignKey(Class,on_delete=models.CASCADE, blank=True,null=True)
+	student_school=models.ForeignKey(School,on_delete=models.CASCADE, blank=True,null=True)
+	is_offering = models.BooleanField(default=True)
+	published = models.BooleanField(default=False)
 
 
 	def __str__(self):
-		return str(self.student.student_name + " - " + self.Subject.subject_name)
+		return str(self.student.firstname + " - " + self.Subject.subject_name+' '+ self.Term.term)
 
 	
 
 
-#Models for Annual Students Results
+# Model for Annual Students Results Summary
 class AnnualResultSummary(models.Model):
 	Student_name=models.ForeignKey(Student,on_delete=models.CASCADE)
 	TotalScore=models.CharField(max_length=100, blank=True,null=True , default="-")
@@ -51,11 +57,12 @@ class AnnualResultSummary(models.Model):
 	Position=models.CharField(max_length=100, blank=True,null=True , default="-")
 	PrincipalVerdict=models.CharField(max_length=100, blank=True,null=True , default="-")
 	AcademicSession=models.ForeignKey(AcademicSession,on_delete=models.CASCADE,blank=True,null=True)
+	published = models.BooleanField(default=False)
 
 	def __str__(self):
-		return str(self.Student_name.student_name +"-"+ self.Student_name.student_class.Class)
+		return str(self.Student_name.firstname +"-"+ self.Student_name.student_class.Class + " "+ self.AcademicSession.session)
 
-
+# Model for Annual Students Subject Results
 class AnnualSubjectResult(models.Model):
 	student = models.ForeignKey(Student,on_delete=models.CASCADE)
 	Subject= models.ForeignKey(Subject,on_delete=models.CASCADE)
@@ -68,6 +75,8 @@ class AnnualSubjectResult(models.Model):
 	SubjectPosition=models.CharField(max_length=100, blank=True,null=True,default="-")
 	Remark=models.CharField(max_length= 100, blank=True,null=True, default="-")
 	AcademicSession=models.ForeignKey(AcademicSession,on_delete=models.CASCADE,blank=True,null=True)
+	is_offering = models.BooleanField(default=True)
+	published = models.BooleanField(default=False)
 	
 	def __str__(self):
-		return str(self.student.student_name +"-"+ self.Subject.subject_name)
+		return str(self.student.firstname +"-"+ self.Subject.subject_name+" "+ self.AcademicSession.session)
