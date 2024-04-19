@@ -68,6 +68,14 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',  # For browser authentication
+        'rest_framework.authentication.TokenAuthentication',    # For token authentication
+    ),
+}
+
 CORS_ALLOW_ALL_ORIGINS = True
 
 ROOT_URLCONF = "management.urls"
