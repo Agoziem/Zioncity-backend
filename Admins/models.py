@@ -23,7 +23,7 @@ class AcademicSession(models.Model):
 
 # classes available in the school
 class Class(models.Model):
-	Class=models.CharField(max_length=10, blank=True)
+	Class=models.CharField(max_length=100, blank=True)
 	
 	def __str__(self):
 		return f"{self.Class}"
