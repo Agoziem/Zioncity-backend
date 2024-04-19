@@ -105,8 +105,8 @@ POST http://127.0.0.1:8000/resultapi/getResultSummaries/
 Content-Type: application/json
 
 {
-    "term_id": "3",
-    "session_id": "3",
+    "term_id": "5",
+    "session_id": "2",
     "school_id": "2",
     "class_id": "2"
   }

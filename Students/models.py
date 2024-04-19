@@ -14,7 +14,8 @@ class Student(models.Model):
     student_class=models.ForeignKey(Class, on_delete=models.CASCADE )
     student_id=models.CharField(max_length=100, blank=True,null=True)
     student_pin=models.CharField(max_length=100, blank=True,null=True)
-    student_Photo=models.ImageField(upload_to="assets/Students",blank=True,null=True)
+    role = models.CharField(max_length=100, blank=True, default="Student")
+    headshot=models.ImageField(upload_to="assets/Students",blank=True,null=True)
     student_school=models.ForeignKey(School, on_delete=models.CASCADE, blank=False, null=False)
 
     def __str__(self):

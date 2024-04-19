@@ -13,14 +13,14 @@
 # get all entries for a School
 GET http://127.0.0.1:8000/studentsapi/2/
 
-
+###
 # get all entries for a Particular class in a School
 GET http://127.0.0.1:8000/studentsapi/2/3/
 
 
 # get single entry
 ###
-GET http://127.0.0.1:8000/studentsapi/student/6
+GET http://127.0.0.1:8000/studentsapi/student/10
 
 
 # create an entry
@@ -68,7 +68,7 @@ GET http://127.0.0.1:8000/teachersapi/2/
 
 # get single entry
 ###
-GET http://127.0.0.1:8000/teachersapi/teacher/2
+GET http://127.0.0.1:8000/teachersapi/teacher/5/
 
 
 # create an entry

@@ -18,6 +18,7 @@ urlpatterns = [
     # for creating results
     
     path('getResults/', getResults, name='getResults'),
+    path('getResult/<int:result_id>/', getResult, name='getResult'),
     path('updateResult/<int:result_id>/', updateResult, name='updateResult'),
     path('postResults/', postResults, name='postResults'),
 
@@ -25,6 +26,7 @@ urlpatterns = [
     path('postResultSummaries/', postResultSummaries, name='postResultSummaries'),
 
     path('getAnnualResults/', getAnnualResults, name='getAnnualResults'),
+    path('getAnnualResult/<int:result_id>/', getAnnualResult, name='getAnnualResult'),
     path('updateAnnualResult/<int:result_id>/', updateAnnualResult, name='updateAnnualResult'),
     path('postAnnualResults/', postAnnualResults, name='postAnnualResults'),
 

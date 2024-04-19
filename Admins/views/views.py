@@ -85,12 +85,13 @@ def createAdmin(request, school_id):
     try:
         school = School.objects.get(id=school_id)
         admin = Administrator.objects.create(
-            adminfirstname=data['adminfirstname'],
-            adminlastname=data['adminlastname'],
+            firstname=data['firstname'],
+            surname=data['surname'],
+            sex = data['sex'],
             adminphonenumber=data['adminphonenumber'],
             adminemail=data['adminemail'],
-            adminphoto=data['adminphoto'],
-            adminrole = data['adminrole'],
+            headshot=data['headshot'],
+            role = data['role'],
             school=school,
         )
         serializer = AdminSerializer(admin, many=False)
@@ -108,7 +109,7 @@ def updateAdmin(request, admin_id):
         if school_id:
             admin.school = School.objects.get(id=school_id)
             
-        fields_to_update = ['adminfirstname', 'adminlastname', 'adminphonenumber', 'adminemail', 'adminphoto', 'adminrole']
+        fields_to_update = ['firstname', 'surname','sex','adminphonenumber', 'adminemail', 'headshot', 'role']
         for field in fields_to_update:
             if field in data:
                 setattr(admin, field, data[field])

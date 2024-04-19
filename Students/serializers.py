@@ -9,7 +9,7 @@ class StudentSerializer(serializers.ModelSerializer):
     student_school = serializers.SerializerMethodField()
     class Meta:
         model = Student
-        exclude = ['student_class']
+        exclude = ['student_class','student_pin']
 
     def get_user(self, obj):
         return {"id":obj.user.id,"username":obj.user.username}

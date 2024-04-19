@@ -38,6 +38,7 @@ def getResults(request):
                 "Project":studentresult.Project,
                 'SecondAss': studentresult.SecondAss,
                 'SecondTest': studentresult.SecondTest,
+                'CA':studentresult.CA,
                 'Exam': studentresult.Exam,
                 'Total': studentresult.Total,
                 'Grade': studentresult.Grade,
@@ -51,7 +52,15 @@ def getResults(request):
         studentsubjectResults = []
         return Response(studentsubjectResults, status=status.HTTP_200_OK)
 
-
+# api for getting a single student result
+@api_view(['GET'])
+def getResult(request, result_id):
+    try:
+        result = SubjectResult.objects.get(id=result_id)
+        serializer = SubjectResultSerializer(result, many=False)
+        return Response(serializer.data)
+    except SubjectResult.DoesNotExist:
+        return Response('Result Record does not exist')
 
 # update student result 
 @api_view(['PUT'])
@@ -143,7 +152,16 @@ def getAnnualResults(request):
         studentssubjectAnnualResult = []
         return Response(studentssubjectAnnualResult, status=status.HTTP_200_OK)
 
-
+# api view for getting a single student annual result
+@api_view(['GET'])
+def getAnnualResult(request, result_id):
+    try:
+        result = AnnualSubjectResult.objects.get(id=result_id)
+        serializer = AnnualSubjectResultSerializer(result, many=False)
+        return Response(serializer.data)
+    except AnnualSubjectResult.DoesNotExist:
+        return Response('Annual Result Record does not exist')
+    
 # view for updating all Students Annual Result for a Subject by the Teacher
 @api_view(['PUT'])
 def updateAnnualResult(request, result_id):

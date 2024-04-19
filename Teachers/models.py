@@ -15,9 +15,11 @@ ROLE_CHOICES = [
 class Teacher(models.Model):
 	user = models.OneToOneField(User, on_delete=models.CASCADE, default=2,blank=True,null=True)  
 	firstName= models.CharField(max_length= 200, blank=True,default='None')
-	lastName= models.CharField(max_length= 200, blank=True, default='None')
+	surname = models.CharField(max_length= 200, blank=True, default='None')
+	sex = models.CharField(max_length= 200, blank=True)
 	phone_number= models.CharField(max_length= 200, blank=True)
 	email= models.EmailField(max_length= 200, blank=True)
+	address = models.CharField(max_length= 300, blank=True)
 	teachers_id=models.CharField(max_length= 200, blank=True)
 	role= models.CharField(max_length= 200, blank=True , default="Teacher",choices=ROLE_CHOICES )
 	subjects_taught=models.ManyToManyField(Subject,blank=True)
@@ -30,7 +32,7 @@ class Teacher(models.Model):
 	
 	
 	def __str__(self):
-		return f"{self.firstName} {self.lastName} - {self.teachers_id}"
+		return f"{self.firstName} {self.surname} - {self.teachers_id}"
 
 	# return the URL of the teacher's photo
 	@property

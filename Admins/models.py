@@ -72,23 +72,24 @@ role_choices = (
 )
 
 class Administrator(models.Model):
-	adminfirstname=models.CharField(max_length=100, blank=True)
-	adminlastname=models.CharField(max_length=100, blank=True)
+	firstname=models.CharField(max_length=100, blank=True)
+	surname=models.CharField(max_length=100, blank=True)
+	sex = models.CharField(max_length=100, blank=True)
 	admin_id=models.CharField(max_length=100, blank=True)
 	adminphonenumber=models.CharField(max_length=100, blank=True)
 	adminemail=models.EmailField(max_length=100, blank=True)
-	adminphoto=models.ImageField(upload_to='assets/administrator', blank=True, null=True)
-	adminrole=models.CharField(max_length=100, blank=True, choices=role_choices)
+	headshot=models.ImageField(upload_to='assets/administrator', blank=True, null=True)
+	role=models.CharField(max_length=100, blank=True, choices=role_choices)
 	school=models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
 
 	def __str__(self):
-		return f"{self.adminrole} {self.adminfirstname} - {self.school.Schoolname}"
+		return f"{self.role} {self.firstname} - {self.school.Schoolname}"
 
 	# return the URL of the admin's photo
 	@property
 	def imageURL(self):
 		try:
-			url= self.adminphoto.url
+			url= self.headshot.url
 		except:
 			url=''
 		return url

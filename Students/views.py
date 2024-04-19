@@ -64,7 +64,7 @@ def createStudent(request,school_id, class_id):
             surname=data.get('surname',''),
             othername=data.get('othername',''),
             sex=data.get('sex',''),
-            student_Photo=data.get('student_Photo',''),
+            headshot=data.get('headshot',''),
             student_school=school,
             student_class=student_class,
         )
@@ -99,7 +99,7 @@ def updateStudent(request, student_id):
             return Response('School/Class does not exist',status=status.HTTP_404_NOT_FOUND)
 
         # update the other fields
-        fields_to_update = ['firstname',"surname","othername",'sex',"student_Photo"]
+        fields_to_update = ['firstname',"surname","othername",'sex',"headshot"]
         for field in fields_to_update:
             if field in data:
                 setattr(student,field,data[field])
