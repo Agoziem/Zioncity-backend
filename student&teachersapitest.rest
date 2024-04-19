@@ -73,27 +73,15 @@ GET http://127.0.0.1:8000/teachersapi/teacher/5/
 
 # create an entry
 ###
-POST http://127.0.0.1:8000/teachersapi/create/2/
+POST http://127.0.0.1:8000/teachersapi/create/1/
 Content-Type: application/json
 
 {
-  "id": 8,
-  "user": "@OkparaMary6057",
-  "classes_taught": [],
-  "subjects_taught": [],
-  "school": {
-    "id": 2,
-    "name": "Kings College"
-  },
-  "classFormed": null,
-  "firstName": "Okpara",
-  "lastName": "Mary",
-  "phone_number": "",
-  "email": "",
-  "teachers_id": "teacher/6057",
-  "role": "",
+  "firstName": "Noble",
+  "lastName": "Winifred",
+  "role": "Teacher",
   "is_formteacher": false,
-  "headshot": null
+  "classFormed": null
 }
 
 

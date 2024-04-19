@@ -57,7 +57,7 @@ class Teacher(models.Model):
 				attempts += 1
 			else:
 				raise ValueError("Unable to generate a unique teachers_id")
-			username = f"@{str(self.firstName)}{str(self.lastName)}{random_pin}"
+			username = f"@{str(self.firstName)}{str(self.surname)}{random_pin}"
 			user = User.objects.create_user(username=username, password=self.teachers_id)
 			user.is_staff = True
 			user.save()
