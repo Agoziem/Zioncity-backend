@@ -27,7 +27,7 @@ SECRET_KEY = config('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
 
-ALLOWED_HOSTS = ['web-production-2f75d.up.railway.app']
+ALLOWED_HOSTS = ['127.0.0.1','web-production-2f75d.up.railway.app']
 
 
 # Application definition
@@ -72,8 +72,8 @@ CSRF_TRUSTED_ORIGINS = ['web-production-2f75d.up.railway.app']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',  # For browser authentication
-        'rest_framework.authentication.TokenAuthentication',    # For token authentication
+        'rest_framework.authentication.SessionAuthentication', 
+        'rest_framework.authentication.TokenAuthentication', 
     ),
 }
 

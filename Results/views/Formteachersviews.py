@@ -13,7 +13,6 @@ from Students.models import Student
 @api_view(['POST'])
 def getResultSummaries(request):
     data = request.data
-    print(data)
     term = Term.objects.get(id=data['term_id'])
     session = AcademicSession.objects.get(id=data['session_id'])
     school = School.objects.get(id=data['school_id'])

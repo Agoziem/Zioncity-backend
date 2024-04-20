@@ -24,7 +24,17 @@ class SchoolSerializer(serializers.ModelSerializer):
 
     def get_sessions(self, obj):
         session_data = obj.session.all()
-        return [{"id":session.id,"session":session.session} for session in session_data]
+        sessions = []
+        for session in session_data:
+            terms = session.terms.all()  # Assuming a ForeignKey relationship from Term to Session
+            session_obj = {
+                "id": session.id,
+                "session": session.session,
+                "terms": [{"id": term.id, "term": term.term} for term in terms]
+            }
+            sessions.append(session_obj)
+        return sessions
+
     
     def get_classes(self, obj):
         classes_data = obj.classes.all()

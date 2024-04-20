@@ -22,6 +22,7 @@ class Student(models.Model):
         return f"{self.surname} {self.firstname} - {self.student_id}"
 
 
+
     # save method to generate student_id and student_pin
     def save(self, *args, **kwargs):
         if not self.id: 
@@ -29,8 +30,7 @@ class Student(models.Model):
             while attempts < 5:  # Limit the number of attempts to avoid infinite loop
                 random_pin = str(random.randint(1000, 9999))
                 random_14_digit = str(random.randint(10**13, 10**14 - 1))
-                student_id = f"smss/{random_pin}"
-                
+                student_id = f"COG/{random_pin}"
                 if not Student.objects.filter(student_id=student_id, student_pin=random_14_digit).exists():
                     self.student_id = student_id
                     self.student_pin = random_14_digit

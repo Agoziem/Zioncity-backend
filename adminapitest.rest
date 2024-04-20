@@ -49,7 +49,7 @@ GET http://127.0.0.1:8000/adminsapi/admins/2/
 
 ###
 # get all entries for a Particular class in a School
-GET https://web-production-2f75d.up.railway.app/adminsapi/schools/1/
+GET http://127.0.0.1:8000/adminsapi/schools/2/
 
 ###
 # get all entries for a Particular class in a School
