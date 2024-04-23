@@ -5,6 +5,8 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from Admins.models import School,Class
 from rest_framework import status
+from rest_framework.pagination import PageNumberPagination
+
 
 @api_view(['GET'])
 def getRoutes(request):
@@ -17,15 +19,33 @@ def getRoutes(request):
     ]
     return Response(routes)
 
+# view for confirming Student id
+@api_view(['POST'])
+def confirmStudent(request):
+    data = request.data
+    try:
+        student = Student.objects.get(id=data.get('id',''))
+        if student.student_id == data.get('password',''):
+            serializer = StudentSerializer(student, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response('Student does not exist', status=status.HTTP_404_NOT_FOUND)
+    except Student.DoesNotExist:
+        return Response('Student does not exist', status=status.HTTP_404_NOT_FOUND)
+    
 
-# get all students based on the School ID
+# get all students based on the School ID by pagination
 @api_view(['GET'])
 def getallStudents(request, school_id):
     try:
+        paginator = PageNumberPagination()
+        paginator.page_size = 21 
         school = School.objects.get(id=school_id)
         students = Student.objects.filter(student_school=school)
-        serializer = StudentSerializer(students, many=True)
-        return Response(serializer.data,status=status.HTTP_200_OK)
+        page_number = request.GET.get('page', 1)  
+        result_page = paginator.paginate_queryset(students, request)
+        serializer = StudentSerializer(result_page, many=True)
+        return paginator.get_paginated_response(serializer.data)
     except School.DoesNotExist:
         return Response('School does not exist',status=status.HTTP_404_NOT_FOUND)
     

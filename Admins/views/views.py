@@ -57,6 +57,20 @@ def getRoutes(request):
 
 
 # /////////////////////////////////////////////////////////////////////////////////////////
+# confirm Admin id
+@api_view(['POST'])
+def confirmAdmin(request):
+    data = request.data
+    try:
+        admin = Administrator.objects.get(id=data.get('id',''))
+        if admin.admin_id == data.get('password',''):
+            serializer = AdminSerializer(admin, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response('Admin not found', status=status.HTTP_404_NOT_FOUND)
+    except Administrator.DoesNotExist:
+        return Response('Admin not found', status=status.HTTP_404_NOT_FOUND)
+    
 
 # get school admins
 @api_view(['GET'])

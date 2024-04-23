@@ -21,7 +21,7 @@ class Student(models.Model):
     def __str__(self):
         return f"{self.surname} {self.firstname} - {self.student_id}"
 
-
+# 
 
     # save method to generate student_id and student_pin
     def save(self, *args, **kwargs):

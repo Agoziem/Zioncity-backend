@@ -39,30 +39,6 @@ def getRoutes(request):
     ]
     return Response(routes)
 
-# view for confirming students Pin
-@api_view(['POST'])
-def confirm_pin(request,id):
-    data=request.data
-    try:
-        student = Student.objects.get(id=id,pin=data['pin'])
-        serializer = StudentSerializer(student, many=False)
-        return Response({'data':serializer.data,'message': 'Your Pin is Correct'}, status=status.HTTP_200_OK)
-    except Student.DoesNotExist:
-        return Response({'message': 'The Pin you entered is incorrect'}, status=status.HTTP_404_NOT_FOUND)
-
-# view for getting result summary for a student
-@api_view(['POST'])
-def get_result_summary(request):
-    data=request.data
-    try:
-        student = Student.objects.get(id=data['student_id'])
-        term = Term.objects.get(id=data['term_id'])
-        session = AcademicSession.objects.get(id=data['session_id'])
-        results = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session)
-        serializer = ResultSummarySerializer(results, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except ResultSummary.DoesNotExist:
-        return Response({'message': 'Result does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 # view for getting one Subject result for a Student Result
 @api_view(['POST'])
@@ -83,18 +59,24 @@ def get_subject_result(request):
 @api_view(['POST'])
 def get_subject_results(request):
     data=request.data
+    Result = {}
     try:
-        student = Student.objects.get(id=data['student_id'])
+        student = Student.objects.get(id=data['student_id'],student_pin=data['student_pin'])
         term = Term.objects.get(id=data['term_id'])
         session = AcademicSession.objects.get(id=data['session_id'])
+        resultsummaryobject = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session)
+        resultsummaryserializer = ResultSummarySerializer(resultsummaryobject, many=False)
+        resultsummary = resultsummaryserializer.data
         subjectresults = []
         results = SubjectResult.objects.filter(student=student, Term=term,AcademicSession=session)
         for result in results:
             serializer = SubjectResultSerializer(result, many=False)
             subjectresults.append(serializer.data)
-        return Response(subjectresults, status=status.HTTP_200_OK)
-    except SubjectResult.DoesNotExist:
-        return Response({'message': 'Subject Results do not exist'}, status=status.HTTP_404_NOT_FOUND)
+        Result['resultsummary'] = resultsummary
+        Result['subjectresults'] = subjectresults
+        return Response(Result, status=status.HTTP_200_OK)
+    except Student.DoesNotExist:
+        return Response({'message': 'incorrect Credentials'}, status=status.HTTP_404_NOT_FOUND)
 
 # //////////////////////////////////////////// Annual Results ////////////////////////////////////////////
 

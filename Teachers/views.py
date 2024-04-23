@@ -7,6 +7,22 @@ from Admins.models import School, Class, Subject
 from rest_framework import status
 from django.db import IntegrityError
 
+
+
+# confirm teacher Id
+@api_view(['POST'])
+def confirmTeacher(request):
+    data = request.data
+    try:
+        teacher = Teacher.objects.get(id=data.get('id',''))
+        if teacher.teachers_id == data.get('password',''):
+            serializer = TeacherSerializer(teacher, many=False)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        else:
+            return Response('Teacher does not exist', status=status.HTTP_404_NOT_FOUND)
+    except Teacher.DoesNotExist:
+        return Response('Teacher does not exist', status=status.HTTP_404_NOT_FOUND)
+
 @api_view(['GET'])
 def getRoutes(request):
     routes = [

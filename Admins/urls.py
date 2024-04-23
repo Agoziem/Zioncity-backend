@@ -40,6 +40,7 @@ urlpatterns = [
     path('schools/<int:school_id>/update/', updateSchool, name='update_school'),
     path('schools/<int:school_id>/delete/', deleteSchool, name='delete_school'),
 
+    path('confirmAdmin/', confirmAdmin, name='confirm_admin'),
     path('admins/<int:school_id>/', getAdmins, name='admins'),
     path('admins/<int:school_id>/create/', createAdmin, name='create_admin'),
     path('admins/<int:school_id>/<int:admin_id>/', getAdmin, name='admin'),

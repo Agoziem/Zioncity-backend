@@ -7,8 +7,6 @@ urlpatterns = [
     path('',getRoutes, name='getRoutes'),
 
     # for getting results
-    path('confirm_pin/<int:id>/', confirm_pin, name='confirm_pin'),
-    path('getresultsummary/', get_result_summary, name='getresultsummary'),
     path('getsubjectresult/', get_subject_result, name='getsubjectresult'),
     path('getsubjectresults/', get_subject_results, name='getsubjectresults'),
     path('getannualresultsummary/', get_annual_result_summary, name='getannualresultsummary'),

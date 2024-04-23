@@ -37,12 +37,15 @@ class TeacherSerializer(serializers.ModelSerializer):
             return {'id': obj.classFormed.id, 'name': obj.classFormed.Class}
         else:
             return None
-        
+    
     def get_headshot(self, obj):
-        headshot = obj.headshot.url
+        headshot = obj.headshot
+        if not headshot:
+            return None 
+        headshot_url = headshot.url
         pattern_media = r'^/media/'
         pattern_percent_3A = r'%3A'
-        modified_url = re.sub(pattern_media, '', headshot)
+        modified_url = re.sub(pattern_media, '', headshot_url)
         modified_url = re.sub(pattern_percent_3A, ':/', modified_url, count=1)
         modified_url = re.sub(pattern_percent_3A, ':', modified_url)
         return modified_url
