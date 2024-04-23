@@ -122,7 +122,7 @@ def updateTeacher(request, teacher_id):
         try:
             # update the Formteachers Class if she/he is a Formteacher
             is_formteacher = data.get('is_formteacher')
-            classid = data['classFormed'].get('id')
+            classid = data.get('classFormed', "").get('id')
             if is_formteacher and classid:
                 classFormed = Class.objects.get(id=classid)
                 teacher.is_formteacher = is_formteacher

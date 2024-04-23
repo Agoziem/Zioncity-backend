@@ -42,7 +42,6 @@ def getallStudents(request, school_id):
         paginator.page_size = 21 
         school = School.objects.get(id=school_id)
         students = Student.objects.filter(student_school=school)
-        page_number = request.GET.get('page', 1)  
         result_page = paginator.paginate_queryset(students, request)
         serializer = StudentSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
