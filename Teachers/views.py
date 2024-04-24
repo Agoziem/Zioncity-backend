@@ -113,16 +113,19 @@ def updateTeacher(request, teacher_id):
     data = request.data
     try:
         teacher = Teacher.objects.get(id=teacher_id)
-        is_formteacher = data.get('is_formteacher')
         try:
             school_id = data('school','').get('id')
             school = School.objects.get(id=school_id)
             teacher.school = school
+        except:
+            school_id = teacher.school.id
+      
+        is_formteacher = data.get('is_formteacher')
+        try:
             classid = data.get('classFormed', "").get('id')
         except:
             classid = None
-            pass
-        
+
         if is_formteacher and classid:
             classFormed = Class.objects.get(id=classid)
             teacher.is_formteacher = is_formteacher
