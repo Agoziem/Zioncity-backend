@@ -119,13 +119,13 @@ def updateTeacher(request, teacher_id):
             school_id = data('school','').get('id')
             school = School.objects.get(id=school_id)
             teacher.school = school
-        except AttributeError:
+        except:
             school_id = teacher.school.id
       
         is_formteacher = data.get('is_formteacher')
         try:
             classid = data.get('classFormed', "").get('id')
-        except AttributeError:
+        except:
             classid = None
 
         if is_formteacher and classid:
