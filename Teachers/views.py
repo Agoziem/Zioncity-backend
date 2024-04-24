@@ -8,6 +8,16 @@ from rest_framework import status
 from django.db import IntegrityError
 
 
+@api_view(['GET'])
+def getRoutes(request):
+    routes = [
+        "teachersapi/<int:school_id>/",  # get all teachers based on the School ID and Class ID
+        "teachersapi/create/<int:school_id>/",  # create a teacher based on the School ID and Class ID
+        "teachersapi/<int:teacher_id>/",  # get a teacher based on his/her Teacher ID
+        "teachersapi/<int:teacher_id>/update/",  # update a teacher based on his/her Teacher ID
+        "teachersapi/<int:teacher_id>/delete/",  # delete a teacher based on his/her Teacher ID
+    ]
+    return Response(routes)
 
 # confirm teacher Id
 @api_view(['POST'])
@@ -22,18 +32,6 @@ def confirmTeacher(request):
             return Response('Teacher does not exist', status=status.HTTP_404_NOT_FOUND)
     except Teacher.DoesNotExist:
         return Response('Teacher does not exist', status=status.HTTP_404_NOT_FOUND)
-
-@api_view(['GET'])
-def getRoutes(request):
-    routes = [
-        "teachersapi/<int:school_id>/",  # get all teachers based on the School ID and Class ID
-        "teachersapi/create/<int:school_id>/",  # create a teacher based on the School ID and Class ID
-        "teachersapi/<int:teacher_id>/",  # get a teacher based on his/her Teacher ID
-        "teachersapi/<int:teacher_id>/update/",  # update a teacher based on his/her Teacher ID
-        "teachersapi/<int:teacher_id>/delete/",  # delete a teacher based on his/her Teacher ID
-    ]
-    return Response(routes)
-
 
 @api_view(['GET'])
 def getTeachers(request, school_id):
@@ -115,26 +113,20 @@ def updateTeacher(request, teacher_id):
     data = request.data
     try:
         teacher = Teacher.objects.get(id=teacher_id)
+        is_formteacher = data.get('is_formteacher')
         try:
             school_id = data('school','').get('id')
-            print(school_id)
             school = School.objects.get(id=school_id)
             teacher.school = school
-        except:
-            school_id = teacher.school.id
-      
-        is_formteacher = data.get('is_formteacher')
-        print(is_formteacher)
-        try:
             classid = data.get('classFormed', "").get('id')
         except:
             classid = None
-
+            pass
+        
         if is_formteacher and classid:
             classFormed = Class.objects.get(id=classid)
             teacher.is_formteacher = is_formteacher
             teacher.classFormed = classFormed
-            print(classFormed)
         else:
             classFormed = None
             teacher.is_formteacher = False

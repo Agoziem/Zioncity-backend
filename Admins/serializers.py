@@ -31,6 +31,8 @@ class SchoolSerializer(serializers.ModelSerializer):
     classes = serializers.SerializerMethodField()
     subjects = serializers.SerializerMethodField()
     Schoollogo = serializers.SerializerMethodField()
+    num_students = serializers.SerializerMethodField()
+    num_teachers = serializers.SerializerMethodField()
 
     class Meta:
         model = School
@@ -70,6 +72,12 @@ class SchoolSerializer(serializers.ModelSerializer):
         modified_url = re.sub(pattern_percent_3A, ':/', modified_url, count=1)
         modified_url = re.sub(pattern_percent_3A, ':', modified_url)
         return modified_url
+    
+    def get_num_students(self, obj):
+        return obj.student_set.count()
+
+    def get_num_teachers(self, obj):
+        return obj.teacher_set.count()
 
 
 # serializer for the academic session model

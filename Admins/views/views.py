@@ -119,10 +119,11 @@ def updateAdmin(request, admin_id):
     data = request.data
     try:
         admin = Administrator.objects.get(id=admin_id)
-        school_id = data.get('school_id')
-        if school_id:
+        try:
+            school_id = data.get('school').get('id')
             admin.school = School.objects.get(id=school_id)
-            
+        except:
+            pass   
         fields_to_update = ['firstname', 'surname','sex','adminphonenumber', 'adminemail', 'headshot', 'role']
         for field in fields_to_update:
             if field in data:

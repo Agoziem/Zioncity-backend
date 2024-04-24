@@ -45,7 +45,7 @@
 
 
 # get all entries for a School
-GET https://web-production-2f75d.up.railway.app/adminsapi/schools/
+GET https://web-production-2f75d.up.railway.app/adminsapi/admins/1
 
 ###
 # get all entries for a Particular class in a School
