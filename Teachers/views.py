@@ -116,7 +116,7 @@ def updateTeacher(request, teacher_id):
     try:
         teacher = Teacher.objects.get(id=teacher_id)
         try:
-            school_id = data['school'].get('id')
+            school_id = data('school').get('id')
             school = School.objects.get(id=school_id)
             teacher.school = school
         except AttributeError:
