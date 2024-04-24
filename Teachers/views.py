@@ -115,42 +115,40 @@ def updateTeacher(request, teacher_id):
     data = request.data
     try:
         teacher = Teacher.objects.get(id=teacher_id)
-        school_id = data['school'].get('id')
-        if school_id:
+        try:
+            school_id = data['school'].get('id')
             school = School.objects.get(id=school_id)
             teacher.school = school
+        except AttributeError:
+            school_id = teacher.school.id
+      
+        is_formteacher = data.get('is_formteacher')
         try:
-            # update the Formteachers Class if she/he is a Formteacher
-            is_formteacher = data.get('is_formteacher')
-            try:
-                classid = data.get('classFormed', "").get('id')
-            except AttributeError:
-                classid = None
-                
-            if is_formteacher and classid:
-                classFormed = Class.objects.get(id=classid)
-                teacher.is_formteacher = is_formteacher
-                teacher.classFormed = classFormed
-            else:
-                classFormed = None
-                teacher.is_formteacher = False
-                teacher.classFormed = classFormed
+            classid = data.get('classFormed', "").get('id')
+        except AttributeError:
+            classid = None
 
-            # update the teachers classes field
-            classes_taught_data = data.get('classes_taught', [])
-            if classes_taught_data:
-                classes_taught_ids = [class_obj['id'] for class_obj in classes_taught_data]
-                classes_taught = Class.objects.filter(id__in=classes_taught_ids)
-                teacher.classes_taught.set(classes_taught)
+        if is_formteacher and classid:
+            classFormed = Class.objects.get(id=classid)
+            teacher.is_formteacher = is_formteacher
+            teacher.classFormed = classFormed
+        else:
+            classFormed = None
+            teacher.is_formteacher = False
+            teacher.classFormed = classFormed
 
-            subjects_taught_data = data.get('subjects_taught', [])
-            if subjects_taught_data:
-                subjects_taught_ids = [subject_obj['id'] for subject_obj in subjects_taught_data]
-                subjects_taught = Subject.objects.filter(id__in=subjects_taught_ids)
-                teacher.subjects_taught.set(subjects_taught)
+        # update the teachers classes field
+        classes_taught_data = data.get('classes_taught', [])
+        if classes_taught_data:
+            classes_taught_ids = [class_obj['id'] for class_obj in classes_taught_data]
+            classes_taught = Class.objects.filter(id__in=classes_taught_ids)
+            teacher.classes_taught.set(classes_taught)
 
-        except Class.DoesNotExist:
-            return Response('Classformed does not exist', status=status.HTTP_404_NOT_FOUND)
+        subjects_taught_data = data.get('subjects_taught', [])
+        if subjects_taught_data:
+            subjects_taught_ids = [subject_obj['id'] for subject_obj in subjects_taught_data]
+            subjects_taught = Subject.objects.filter(id__in=subjects_taught_ids)
+            teacher.subjects_taught.set(subjects_taught)
 
         # update other fields
         other_fields = ['firstName', 'surname','sex', 'phone_number', 'email', 'role','headshot',"address"]

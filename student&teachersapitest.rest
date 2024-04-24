@@ -68,12 +68,12 @@ GET http://127.0.0.1:8000/teachersapi/2/
 
 # get single entry
 ###
-GET http://127.0.0.1:8000/teachersapi/teacher/5/
+GET https://web-production-2f75d.up.railway.app/teachersapi/teacher/21/
 
 
 # create an entry
 ###
-POST http://127.0.0.1:8000/teachersapi/create/1/
+POST http://web-production-2f75d.up.railway.app/teachersapi/create/1/
 Content-Type: application/json
 
 {
@@ -87,12 +87,19 @@ Content-Type: application/json
 
 ###
 # update an entry
-PUT http://127.0.0.1:8000/teachersapi/update/2/
+PUT http://web-production-2f75d.up.railway.app/teachersapi/update/21/
 Content-Type: application/json
 
 
 {
-
+  "firstName": "Chiagoziem",
+  "lastName": "Ndukwe",
+  "role": "Formteacher",
+  "is_formteacher": true,
+  "classFormed": {
+    "id": "8",
+    "name": "Jss3 Royal"
+}
 }
 
 ###
