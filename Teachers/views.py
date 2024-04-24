@@ -117,12 +117,14 @@ def updateTeacher(request, teacher_id):
         teacher = Teacher.objects.get(id=teacher_id)
         try:
             school_id = data('school','').get('id')
+            print(school_id)
             school = School.objects.get(id=school_id)
             teacher.school = school
         except:
             school_id = teacher.school.id
       
         is_formteacher = data.get('is_formteacher')
+        print(is_formteacher)
         try:
             classid = data.get('classFormed', "").get('id')
         except:
@@ -132,6 +134,7 @@ def updateTeacher(request, teacher_id):
             classFormed = Class.objects.get(id=classid)
             teacher.is_formteacher = is_formteacher
             teacher.classFormed = classFormed
+            print(classFormed)
         else:
             classFormed = None
             teacher.is_formteacher = False
