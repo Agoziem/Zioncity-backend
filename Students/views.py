@@ -102,15 +102,16 @@ def updateStudent(request, student_id):
     try:
         student = Student.objects.get(id=student_id)
         try:
-            schoolid = data.get('schoolid')
+            schoolid = data.get('schoolid','')
             school = School.objects.get(id=schoolid)
             student.student_school = school
-            classid = data.get('classid')
+        except:
+            pass
+        try:
+            classid = data.get('classid','')
             student_class = Class.objects.get(id=classid)
             student.student_class = student_class
-        except School.DoesNotExist or Class.DoesNotExist:
-            return Response('School does not exist',status=status.HTTP_404_NOT_FOUND)
-        except KeyError:
+        except:
             pass
         # update the other fields
         fields_to_update = ['firstname',"surname","othername",'sex',"headshot"]
