@@ -64,17 +64,20 @@ def get_subject_results(request):
         student = Student.objects.get(id=data['student_id'],student_pin=data['student_pin'])
         term = Term.objects.get(id=data['term_id'])
         session = AcademicSession.objects.get(id=data['session_id'])
-        resultsummaryobject = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session)
-        resultsummaryserializer = ResultSummarySerializer(resultsummaryobject, many=False)
-        resultsummary = resultsummaryserializer.data
-        subjectresults = []
-        results = SubjectResult.objects.filter(student=student, Term=term,AcademicSession=session)
-        for result in results:
-            serializer = SubjectResultSerializer(result, many=False)
-            subjectresults.append(serializer.data)
-        Result['resultsummary'] = resultsummary
-        Result['subjectresults'] = subjectresults
-        return Response(Result, status=status.HTTP_200_OK)
+        try:
+            resultsummaryobject = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session,published=True)
+            resultsummaryserializer = ResultSummarySerializer(resultsummaryobject, many=False)
+            resultsummary = resultsummaryserializer.data
+            subjectresults = []
+            results = SubjectResult.objects.filter(student=student, Term=term,AcademicSession=session)
+            for result in results:
+                serializer = SubjectResultSerializer(result, many=False)
+                subjectresults.append(serializer.data)
+            Result['resultsummary'] = resultsummary
+            Result['subjectresults'] = subjectresults
+            return Response(Result, status=status.HTTP_200_OK)
+        except ResultSummary.DoesNotExist:
+            return Response({'message': 'Result Summary does not exist'}, status=status.HTTP_400_BAD_REQUEST)
     except Student.DoesNotExist:
         return Response({'message': 'incorrect Credentials'}, status=status.HTTP_404_NOT_FOUND)
 

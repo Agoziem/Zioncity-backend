@@ -118,8 +118,8 @@ def updateTeacher(request, teacher_id):
             school = School.objects.get(id=school_id)
             teacher.school = school
         except:
-            school_id = teacher.school.id
-      
+            pass
+        
         is_formteacher = data.get('is_formteacher')
         try:
             classid = data.get('classFormed', "").get('id')
