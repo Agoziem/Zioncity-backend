@@ -65,7 +65,7 @@ def get_subject_results(request):
         term = Term.objects.get(id=data['term_id'])
         session = AcademicSession.objects.get(id=data['session_id'])
         try:
-            resultsummaryobject = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session,published=True)
+            resultsummaryobject = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session,published=False)
             resultsummaryserializer = ResultSummarySerializer(resultsummaryobject, many=False)
             resultsummary = resultsummaryserializer.data
             subjectresults = []
