@@ -91,6 +91,21 @@ def postResultSummaries(request):
     return Response('Class Results Published Successfully, and now open to student for viewing')
 
 
+# unpublish all student results summary for a term
+@api_view(['PUT'])
+def unpublishResultSummaries(request):
+    data = request.data
+    for studentsummary in data:
+        try:
+            studentresult = ResultSummary.objects.get(id=studentsummary['id'])
+            studentresult.published = False
+            studentresult.save()
+        except Exception as e:
+            print(str(e))
+            pass
+    return Response('Class Results Unpublished Successfully, and now closed to student for viewing')
+
+
 # //////////////////////////////////////////// Formteachers Annual Results ////////////////////////////////////////////
 
 # get Students Student Annual Results Summary for a session

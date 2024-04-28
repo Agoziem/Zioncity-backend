@@ -26,6 +26,7 @@ def getRoutes(request):
         '/updateResult/<int:result_id>',
         '/deleteResult/<int:result_id>',
         '/postResults/',
+        "/unpublishResults/"
 
         '/getResultSummaries/',
         '/postResultSummaries/',
@@ -65,7 +66,7 @@ def get_subject_results(request):
         term = Term.objects.get(id=data['term_id'])
         session = AcademicSession.objects.get(id=data['session_id'])
         try:
-            resultsummaryobject = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session,published=False)
+            resultsummaryobject = ResultSummary.objects.get(Student_name=student,Term=term,AcademicSession=session,published=True)
             resultsummaryserializer = ResultSummarySerializer(resultsummaryobject, many=False)
             resultsummary = resultsummaryserializer.data
             subjectresults = []

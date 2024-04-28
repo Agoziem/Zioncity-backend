@@ -106,6 +106,21 @@ def postResults(request):
     return Response('Results Published Successfully')
 
 
+# view to unpublish all the Student Results
+@api_view(['PUT'])
+def unpublishResults(request):
+    data = request.data
+    for studentrecord in data:
+        try:
+            studentresult = SubjectResult.objects.get(id=studentrecord['id'])
+            studentresult.published = False
+            studentresult.save()
+        except Exception as e:
+            print(str(e))
+            pass
+    return Response('Results Unpublished Successfully')
+
+
 # //////////////////////////////////////////// Teachers Annual Results ////////////////////////////////////////////
 
 # view for creating & getting all students annual result for a subject

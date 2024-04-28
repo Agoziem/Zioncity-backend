@@ -19,9 +19,11 @@ urlpatterns = [
     path('getResult/<int:result_id>/', getResult, name='getResult'),
     path('updateResult/<int:result_id>/', updateResult, name='updateResult'),
     path('postResults/', postResults, name='postResults'),
+    path('unpublishResults/',unpublishResults, name='unpublishResults'),
 
     path('getResultSummaries/', getResultSummaries, name='getResultSummaries'),
     path('postResultSummaries/', postResultSummaries, name='postResultSummaries'),
+    path('unpublishResultSummaries/', unpublishResultSummaries, name='unpublishResultSummaries'),
 
     path('getAnnualResults/', getAnnualResults, name='getAnnualResults'),
     path('getAnnualResult/<int:result_id>/', getAnnualResult, name='getAnnualResult'),
