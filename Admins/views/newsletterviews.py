@@ -22,6 +22,7 @@ def get_newsletters(request, school_id):
 # view to get all the newsletter for a particular session & term
 @api_view(['GET'])
 def get_newsletter(request, session_id, term_id):
+    print(session_id, term_id)
     try:
         session = AcademicSession.objects.get(id=session_id)
         term = Term.objects.get(id=term_id)
@@ -29,8 +30,8 @@ def get_newsletter(request, session_id, term_id):
         return Response('Session not found', status=status.HTTP_404_NOT_FOUND)
     except Term.DoesNotExist:
         return Response('Term not found', status=status.HTTP_404_NOT_FOUND)
-    newsletters = Newsletter.objects.filter(Newslettersession=session, Newsletterterm=term)
-    serializer = NewsletterSerializer(newsletters, many=False)
+    newsletter = Newsletter.objects.get(Newslettersession=session, Newsletterterm=term)
+    serializer = NewsletterSerializer(newsletter, many=False)
     return Response(serializer.data)
 
 # view to add a newsletter to a particular session & term
