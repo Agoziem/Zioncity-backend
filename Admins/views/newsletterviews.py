@@ -22,7 +22,6 @@ def get_newsletters(request, school_id):
 # view to get all the newsletter for a particular session & term
 @api_view(['GET'])
 def get_newsletter(request, session_id, term_id):
-    print(session_id, term_id)
     try:
         session = AcademicSession.objects.get(id=session_id)
         term = Term.objects.get(id=term_id)
