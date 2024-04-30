@@ -4,7 +4,7 @@ from Admins.models import Class,School
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 
-# model for students
+# model for students /
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=2,blank=True,null=True)
     firstname=models.CharField(max_length=100, blank=True, default="None",null=True)
