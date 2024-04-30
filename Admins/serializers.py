@@ -131,8 +131,18 @@ class SubjectallocationSerializer(serializers.ModelSerializer):
     
 
 class NewsletterSerializer(serializers.ModelSerializer):
+    session = serializers.SerializerMethodField()
+    term = serializers.SerializerMethodField()
     class Meta:
         model = Newsletter
         fields = '__all__'
+
+    def get_session(self, obj):
+        return {'id': obj.Newslettersession.id, 'name': obj.Newslettersession.session}
+    
+    def get_term(self, obj):
+        return {'id': obj.Newsletterterm.id, 'name': obj.Newsletterterm.term}
+
+    
 
     
