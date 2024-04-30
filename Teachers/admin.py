@@ -8,3 +8,4 @@ class TeacherAdmin(admin.ModelAdmin):
     ordering=('role','firstName','teachers_id')
     search_fields=('firstName','surname','teachers_id','role')
     list_filter=('role',"firstName",'surname','teachers_id')
+

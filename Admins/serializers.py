@@ -128,5 +128,11 @@ class SubjectallocationSerializer(serializers.ModelSerializer):
     
     def get_school(self, obj):
         return {'id': obj.school.id, 'name': obj.school.Schoolname}
+    
+
+class NewsletterSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Newsletter
+        fields = '__all__'
 
     

@@ -1,6 +1,6 @@
 from django.db import models
 import random
-
+from ckeditor.fields import RichTextField
 
 
 # terms in an Academic Session
@@ -115,3 +115,15 @@ class Subjectallocation(models.Model):
 
 	def __str__(self):
 		return f"subjects allocated to {self.classname} {self.school.Schoolname} "
+	
+
+class Newsletter(models.Model):
+	Newsletterfile=models.FileField(upload_to='assets/newsletter', blank=True, null=True)
+	Newsletter= RichTextField(default="None",blank=False,null=True)
+	Newsletterterm=models.ForeignKey(Term, on_delete=models.CASCADE, blank=True, null=True)
+	Newslettersession=models.ForeignKey(AcademicSession, on_delete=models.CASCADE, blank=True, null=True)
+	Newsletterdate=models.DateField(auto_now_add=True, blank=True, null=True)
+	school=models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
+
+	def __str__(self):
+		return f"{self.Newsletterterm.term} {self.Newslettersession.session} {self.Newsletterdate} {self.school.Schoolname}"
