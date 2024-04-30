@@ -1,7 +1,7 @@
 from django.contrib import admin
 from .models import *
 
-admin.site.register(Teacher)
+
 @admin.register(Teacher)
 class TeacherAdmin(admin.ModelAdmin):
     list_display=('firstName','surname','teachers_id','role')
