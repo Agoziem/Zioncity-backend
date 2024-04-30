@@ -187,9 +187,9 @@ DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 # Jazzmin settings
 JAZZMIN_SETTINGS = {
-    "site_title": "City of God",
-    "site_header": "City of God",
-    "welcome_sign": "Welcome to City of God backend System",
+    "site_title": "City of Glory",
+    "site_header": "City of Glory",
+    "welcome_sign": "Welcome to City of Glory backend System",
     "copyright" : "edimpact",
     "search_model": "auth.User",
     "user_avatar": "avatar",

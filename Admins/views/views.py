@@ -52,6 +52,13 @@ def getRoutes(request):
         "subjectallocations/<int:subjectallocation_id>/",  # get a subject allocation based on its ID
         "subjectallocations/<int:subjectallocation_id>/update/",  # update a subject allocation based on its ID
         "subjectallocations/<int:subjectallocation_id>/delete/",  # delete a subject allocation based on its ID
+
+        "get_newsletters/<int:school_id>/",
+        "get_newsletter/<int:session_id>/<int:term_id>/",
+        "add_newsletter/<int:session_id>/<int:term_id>/",
+        "update_newsletter/<int:newsletter_id>/",
+        "delete_newsletter/<int:newsletter_id>/",
+
     ]
     return Response(routes)
 

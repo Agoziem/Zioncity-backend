@@ -6,6 +6,7 @@ from .views.schoolviews import *
 from .views.subjectallocationviews import *
 from .views.subjectsviews import *
 from .views.termviews import *
+from .views.newsletterviews import *
 
 
 urlpatterns = [
@@ -52,5 +53,11 @@ urlpatterns = [
     path('subjectallocations/<int:school_id>/<int:subjectallocation_id>/', getSubjectAllocation, name='subject_allocation'),
     path('subjectallocations/<int:subjectallocation_id>/update/', updateSubjectAllocation, name='update_subject_allocation'),
     path('subjectallocations/<int:subjectallocation_id>/delete/', deleteSubjectAllocation, name='delete_subject_allocation'),
+
+    path('get_newsletters/<int:school_id>/', get_newsletters, name='get_newsletters'),
+    path('get_newsletter/<int:session_id>/<int:term_id>/', get_newsletter, name='get_newsletters'),
+    path('add_newsletter/<int:session_id>/<int:term_id>/', add_newsletter, name='add_newsletter'),
+    path('update_newsletter/<int:newsletter_id>/', update_newsletter, name='update_newsletter'),
+    path('delete_newsletter/<int:newsletter_id>/', delete_newsletter, name='delete_newsletter'),
 
 ]
