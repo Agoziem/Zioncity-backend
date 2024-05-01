@@ -118,7 +118,6 @@ class SubjectallocationSerializer(serializers.ModelSerializer):
         model = Subjectallocation
         fields = '__all__' 
 
-    
     def get_subjects(self, obj):
         subjects_data = obj.subjects.all()
         return [{"id":subject.id,"name":subject.subject_name} for subject in subjects_data]
