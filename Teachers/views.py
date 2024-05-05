@@ -5,7 +5,6 @@ from .models import Teacher
 from .serializers import TeacherSerializer
 from Admins.models import School, Class, Subject
 from rest_framework import status
-from django.db import IntegrityError
 
 
 @api_view(['GET'])
