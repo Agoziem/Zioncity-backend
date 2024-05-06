@@ -65,13 +65,17 @@ class SchoolSerializer(serializers.ModelSerializer):
         Schoollogo = obj.Schoollogo
         if not Schoollogo:
             return None 
+        
         Schoollogo_url = Schoollogo.url
+        if not Schoollogo_url.startswith(('http://', 'https://')):
+            Schoollogo_url = f"http://127.0.0.1:8000/{Schoollogo_url}"  
         pattern_media = r'^/media/'
         pattern_percent_3A = r'%3A'
         modified_url = re.sub(pattern_media, '', Schoollogo_url)
         modified_url = re.sub(pattern_percent_3A, ':/', modified_url, count=1)
         modified_url = re.sub(pattern_percent_3A, ':', modified_url)
         return modified_url
+
     
     def get_num_students(self, obj):
         return obj.student_set.count()

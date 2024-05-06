@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['127.0.0.1','web-production-2f75d.up.railway.app']
 # Application definition
 
 INSTALLED_APPS = [
+    'channels',
     'jazzmin',
     "django.contrib.admin",
     "django.contrib.auth",
@@ -99,7 +100,23 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = "management.wsgi.application"
+ASGI_APPLICATION = 'management.asgi.application'
 
+# Channels
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+    }
+}
+
+# CHANNEL_LAYERS = {
+#     'default': {
+#         'BACKEND': 'channels_redis.core.RedisChannelLayer',
+#         'CONFIG': {
+#             "hosts": [('127.0.0.1', 6379)],
+#         },
+#     },
+# }
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases

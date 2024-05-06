@@ -37,8 +37,17 @@ class Subject(models.Model):
 	def __str__(self):
 		return f"{self.subject_name}"
 
+Schooltype_choices = (
+	('Creche', 'Creche'),
+	('Nursery', 'Nursery'),
+	('Primary', 'Primary'),
+	('Secondary', 'Secondary'),
+	('Primary and Secondary', 'Primary and Secondary'),
+	('Tertiary', 'Tertiary'),
+)
 # school details
 class School(models.Model):
+	Schooltype = models.CharField(max_length=100,choices=Schooltype_choices, blank=True)
 	Schoollogo=models.ImageField(upload_to='assets/Schoollogo', blank=True , null=True)
 	Schoolname= models.CharField(max_length= 300, blank=True)
 	Schoolofficialline= models.CharField(max_length= 300, blank=True)
@@ -51,6 +60,7 @@ class School(models.Model):
 	Facebookpage= models.CharField(max_length= 300, blank=True)
 	Twitterhandle= models.CharField(max_length= 300, blank=True)
 	Whatsapplink= models.CharField(max_length= 300, blank=True)
+	Instagramlink= models.CharField(max_length= 300, blank=True)
 	
 	def __str__(self):
 		return str(self.Schoolname)
@@ -127,3 +137,14 @@ class Newsletter(models.Model):
 
 	def __str__(self):
 		return f"{self.Newsletterterm.term} {self.Newslettersession.session} {self.Newsletterdate} {self.school.Schoolname}"
+	
+
+class Notfication(models.Model):
+	headline=models.CharField(max_length=100, blank=True)
+	Notification= models.TextField(blank=True)
+	Notificationdate=models.DateField(auto_now_add=True, blank=True, null=True)
+	school=models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
+	is_seen=models.BooleanField(default=False)
+
+	def __str__(self):
+		return f"{self.Notificationdate} {self.school.Schoolname}"
