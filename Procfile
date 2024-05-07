@@ -1,1 +1,1 @@
-web: daphne -p 8001 management.asgi:application
+web: uvicorn management.asgi:application --port 8000 --workers 4 --log-level debug --reload
