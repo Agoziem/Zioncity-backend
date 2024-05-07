@@ -1,7 +1,11 @@
 from django.db import models
 import random
 from ckeditor.fields import RichTextField
-
+from django.contrib.auth.models import User
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+from django.db.models.signals import post_delete
+from django.dispatch import receiver
 
 # terms in an Academic Session
 class Term(models.Model):
@@ -138,13 +142,79 @@ class Newsletter(models.Model):
 	def __str__(self):
 		return f"{self.Newsletterterm.term} {self.Newslettersession.session} {self.Newsletterdate} {self.school.Schoolname}"
 	
+user_group=(
+	('Teachers', 'Teachers'),
+	('Students', 'Students'),
+	('Admins', 'Admins'),
+	('Bursar', 'Bursar'),
+	('All', 'All'),
+)
 
-class Notfication(models.Model):
+class Notification(models.Model):
+	Notification_group = models.CharField(max_length=100, choices=user_group, blank=True)
 	headline=models.CharField(max_length=100, blank=True)
 	Notification= models.TextField(blank=True)
 	Notificationdate=models.DateField(auto_now_add=True, blank=True, null=True)
 	school=models.ForeignKey(School, on_delete=models.CASCADE, blank=True, null=True)
-	is_seen=models.BooleanField(default=False)
+	users_seen=models.ManyToManyField(User, blank=True)
 
 	def __str__(self):
 		return f"{self.Notificationdate} {self.school.Schoolname}"
+	
+	def save(self, *args, **kwargs):
+		if not self.id:
+			super().save(*args, **kwargs)  # Save the Notification object first
+			room = self.Notification_group
+			if Notification.objects.filter(Notification_group=room).exists():
+				channel_layer = get_channel_layer()
+				async_to_sync(channel_layer.group_send)(
+					f'notice_{room}',
+					{
+						'type': 'notification_message',
+						'action': 'create',
+						'notification': {
+							'id': self.id,
+							'headline': self.headline,
+							'Notification': self.Notification,
+							'Notificationdate': str(self.Notificationdate),
+							'school': self.school.id,
+							'users_seen': [user.id for user in self.users_seen.all()]
+						}
+					}
+				)
+		else:
+			super().save(*args, **kwargs)
+
+	def delete(self, *args, **kwargs):
+		room = self.Notification_group
+		print(room)
+		super().delete(*args, **kwargs)  # Delete the Notification object first
+		channel_layer = get_channel_layer()
+		async_to_sync(channel_layer.group_send)(
+			f'notice_{room}',
+			{
+				'type': 'notification_message',
+				'action': 'delete',
+				'notification': {
+					'id': self.id
+				}
+			}
+		)
+
+
+
+@receiver(post_delete, sender=Notification)
+def notify_notification_deleted(sender, instance, **kwargs):
+    room = instance.Notification_group
+    channel_layer = get_channel_layer()
+    async_to_sync(channel_layer.group_send)(
+        f'notice_{room}',
+        {
+            'type': 'notification_message',
+            'action': 'delete',
+            'notification': {
+                'id': instance.id
+            }
+        }
+    )
+

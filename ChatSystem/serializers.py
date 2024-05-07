@@ -3,10 +3,16 @@ from .models import *
 
 # serializers for the models in the ChatSystem app
 class ChatRoomSerializer(serializers.ModelSerializer):
+    # get all the messages attached to a chatroom
+    messages = serializers.SerializerMethodField()
     class Meta:
         model = ChatRoom
         fields = '__all__'
 
+    def get_messages(self, obj):
+        messages = RoomMessage.objects.filter(chatroom=obj)
+        serializer = RoomMessageSerializer(messages, many=True)
+        return serializer.data
    
 
 class RoomMessageSerializer(serializers.ModelSerializer):

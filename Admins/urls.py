@@ -7,6 +7,7 @@ from .views.subjectallocationviews import *
 from .views.subjectsviews import *
 from .views.termviews import *
 from .views.newsletterviews import *
+from .views.notificationviews import *
 
 
 urlpatterns = [
@@ -59,5 +60,12 @@ urlpatterns = [
     path('add_newsletter/<int:session_id>/<int:term_id>/', add_newsletter, name='add_newsletter'),
     path('update_newsletter/<int:newsletter_id>/', update_newsletter, name='update_newsletter'),
     path('delete_newsletter/<int:newsletter_id>/', delete_newsletter, name='delete_newsletter'),
+
+    path('get_notifications/<int:school_id>/', get_notifications, name='get_notifications'),
+    path('get_notifications_by_group/<int:school_id>/<str:user_group>/', get_notifications_by_group, name='get_notifications_by_group'),
+    path('get_single_notification/<int:notification_id>/', get_single_notification, name='get_single_notification'),
+    path('create_notification/<int:school_id>/', create_notification, name='create_notification'),
+    path('update_notification/<int:notification_id>/', update_notification, name='update_notification'),
+    path('delete_notification/<int:notification_id>/', delete_notification, name='delete_notification'),
 
 ]

@@ -4,7 +4,7 @@ from .views.Roomchatviews import *
 
 urlpatterns = [
     path('getchatrooms/<int:school_id>/', getChatRooms, name='get_chat_rooms'),
-    path('getchatroom/<int:chatroom_id>/', getChatRoom, name='get_chat_room'),
+    path('getchatroom/<str:chatroom_name>/', getChatRoom, name='get_chat_room'),
     path('createchatroom/<int:school_id>/', createChatRoom, name='create_chat_room'),
     path('editchatroom/<int:chatroom_id>/', editChatRoom, name='edit_chat_room'),
     path('deletechatroom/<int:chatroom_id>/', deleteChatRoom, name='delete_chat_room'),

@@ -50,9 +50,9 @@ class NewsletterAdmin(admin.ModelAdmin):
     list_filter = ('Newsletterterm__term','Newslettersession__session','Newsletterdate','school__Schoolname')
     sortable_by = ('Newsletterterm__term','Newslettersession__session','Newsletterdate','school__Schoolname')
 
-@admin.register(Notfication)
+@admin.register(Notification)
 class NotficationAdmin(admin.ModelAdmin):
-    list_display = ('headline','school','Notificationdate','is_seen')
+    list_display = ('headline','school','Notificationdate')
     search_fields = ('school__Schoolname','notification','Notificationdate')
-    list_filter = ('school__Schoolname','Notificationdate','is_seen')
-    sortable_by = ('school__Schoolname','Notificationdate','is_seen')
+    list_filter = ('school__Schoolname','Notificationdate')
+    sortable_by = ('school__Schoolname','Notificationdate')

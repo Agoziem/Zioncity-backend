@@ -56,13 +56,16 @@ def getChatRooms(request, school_id):
     
 # get a ChatRoom
 @api_view(['GET'])
-def getChatRoom(request, chatroom_id):
+def getChatRoom(request, chatroom_name):
     try:
-        chatroom = ChatRoom.objects.get(id=chatroom_id)
+        chatroom,created = ChatRoom.objects.get_or_create(name=chatroom_name)
+        if created:
+            chatroom.save()
         serializer = ChatRoomSerializer(chatroom, many=False)
         return Response(serializer.data, status=status.HTTP_200_OK)
-    except ChatRoom.DoesNotExist:
-        return Response('ChatRoom does not exist', status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        print(e)
+        return Response('An error occurred', status=status.HTTP_404_NOT_FOUND)
 
 # get all messages in a ChatRoom
 @api_view(['GET'])

@@ -147,5 +147,12 @@ class NewsletterSerializer(serializers.ModelSerializer):
         return {'id': obj.Newsletterterm.id, 'name': obj.Newsletterterm.term}
 
     
+class NotificationSerializer(serializers.ModelSerializer):
+    school = serializers.SerializerMethodField()
+    class Meta:
+        model = Notification
+        fields = '__all__'
 
+    def get_school(self, obj):
+        return {'id': obj.school.id, 'name': obj.school.Schoolname}
     
