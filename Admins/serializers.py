@@ -5,7 +5,7 @@ from utils import *
 # serializers for the models in the Admins app
 class AdminSerializer(serializers.ModelSerializer):
     school = serializers.SerializerMethodField()
-    headshot = serializers.SerializerMethodField()
+    headshot = serializers.ImageField(allow_null=True, required=False)
     headshot_url = serializers.SerializerMethodField()
     headshot_name = serializers.SerializerMethodField()
     class Meta:
@@ -26,7 +26,7 @@ class SchoolSerializer(serializers.ModelSerializer):
     sessions = serializers.SerializerMethodField()
     classes = serializers.SerializerMethodField()
     subjects = serializers.SerializerMethodField()
-    Schoollogo = serializers.SerializerMethodField()
+    Schoollogo = serializers.ImageField(allow_null=True, required=False)
     Schoollogo_url = serializers.SerializerMethodField()
     Schoollogo_name = serializers.SerializerMethodField()
     num_students = serializers.SerializerMethodField()

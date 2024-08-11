@@ -7,10 +7,10 @@ class StudentSerializer(serializers.ModelSerializer):
     user = serializers.SerializerMethodField()
     studentclass = serializers.SerializerMethodField()
     student_school = serializers.SerializerMethodField()
-    headshot = serializers.SerializerMethodField()
+    headshot = serializers.ImageField(allow_null=True, required=False)
     headshot_url = serializers.SerializerMethodField()
     headshot_name = serializers.SerializerMethodField()
-    
+
     class Meta:
         model = Student
         exclude = ['student_class','student_pin']

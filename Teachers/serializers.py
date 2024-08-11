@@ -15,7 +15,7 @@ class TeacherSerializer(serializers.ModelSerializer):
     subjects_taught = serializers.SerializerMethodField()
     school = serializers.SerializerMethodField()
     classFormed = serializers.SerializerMethodField()
-    headshot = serializers.SerializerMethodField()
+    headshot = serializers.ImageField(allow_null=True, required=False)
     headshot_url = serializers.SerializerMethodField()
     headshot_name = serializers.SerializerMethodField()
     
