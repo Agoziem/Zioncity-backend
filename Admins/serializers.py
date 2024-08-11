@@ -1,11 +1,13 @@
 from rest_framework import serializers
 from .models import *
-import re
+from utils import *
 
 # serializers for the models in the Admins app
 class AdminSerializer(serializers.ModelSerializer):
     school = serializers.SerializerMethodField()
     headshot = serializers.SerializerMethodField()
+    headshot_url = serializers.SerializerMethodField()
+    headshot_name = serializers.SerializerMethodField()
     class Meta:
         model = Administrator
         fields = '__all__'
@@ -13,17 +15,11 @@ class AdminSerializer(serializers.ModelSerializer):
     def get_school(self, obj):
         return {'id': obj.school.id, 'name': obj.school.Schoolname}
     
-    def get_headshot(self, obj):
-        headshot = obj.headshot
-        if not headshot:
-            return None 
-        headshot_url = headshot.url
-        pattern_media = r'^/media/'
-        pattern_percent_3A = r'%3A'
-        modified_url = re.sub(pattern_media, '', headshot_url)
-        modified_url = re.sub(pattern_percent_3A, ':/', modified_url, count=1)
-        modified_url = re.sub(pattern_percent_3A, ':', modified_url)
-        return modified_url
+    def get_headshot_url(self, obj):
+        return get_full_image_url(obj.headshot)
+    
+    def get_headshot_name(self, obj):
+        return get_image_name(obj.headshot)
 
 # serializer for the school model
 class SchoolSerializer(serializers.ModelSerializer):
@@ -31,6 +27,8 @@ class SchoolSerializer(serializers.ModelSerializer):
     classes = serializers.SerializerMethodField()
     subjects = serializers.SerializerMethodField()
     Schoollogo = serializers.SerializerMethodField()
+    Schoollogo_url = serializers.SerializerMethodField()
+    Schoollogo_name = serializers.SerializerMethodField()
     num_students = serializers.SerializerMethodField()
     num_teachers = serializers.SerializerMethodField()
 
@@ -61,22 +59,12 @@ class SchoolSerializer(serializers.ModelSerializer):
         subjects_data = obj.Subjects.all()
         return [{"id":subject.id,"subject":subject.subject_name} for subject in subjects_data]
     
-    def get_Schoollogo(self, obj):
-        Schoollogo = obj.Schoollogo
-        if not Schoollogo:
-            return None 
-        
-        Schoollogo_url = Schoollogo.url
-        if not Schoollogo_url.startswith(('http://', 'https://')):
-            Schoollogo_url = f"http://127.0.0.1:8000/{Schoollogo_url}"  
-        pattern_media = r'^/media/'
-        pattern_percent_3A = r'%3A'
-        modified_url = re.sub(pattern_media, '', Schoollogo_url)
-        modified_url = re.sub(pattern_percent_3A, ':/', modified_url, count=1)
-        modified_url = re.sub(pattern_percent_3A, ':', modified_url)
-        return modified_url
-
+    def get_Schoollogo_url(self, obj):
+        return get_full_image_url(obj.Schoollogo)
     
+    def get_Schoollogo_name(self, obj):
+        return get_image_name(obj.Schoollogo)
+
     def get_num_students(self, obj):
         return obj.student_set.count()
 

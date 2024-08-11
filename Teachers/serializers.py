@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from .models import Teacher
 from django.contrib.auth.models import User
-import re
+from utils import * 
+
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
@@ -15,6 +16,8 @@ class TeacherSerializer(serializers.ModelSerializer):
     school = serializers.SerializerMethodField()
     classFormed = serializers.SerializerMethodField()
     headshot = serializers.SerializerMethodField()
+    headshot_url = serializers.SerializerMethodField()
+    headshot_name = serializers.SerializerMethodField()
     
     class Meta:
         model = Teacher
@@ -38,17 +41,11 @@ class TeacherSerializer(serializers.ModelSerializer):
         else:
             return None
     
-    def get_headshot(self, obj):
-        headshot = obj.headshot
-        if not headshot:
-            return None 
-        headshot_url = headshot.url
-        pattern_media = r'^/media/'
-        pattern_percent_3A = r'%3A'
-        modified_url = re.sub(pattern_media, '', headshot_url)
-        modified_url = re.sub(pattern_percent_3A, ':/', modified_url, count=1)
-        modified_url = re.sub(pattern_percent_3A, ':', modified_url)
-        return modified_url
+    def get_headshot_url(self, obj):
+        return get_full_image_url(obj.headshot)
+    
+    def get_headshot_name(self, obj):
+        return get_image_name(obj.headshot)
 
 
 

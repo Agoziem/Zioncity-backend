@@ -12,7 +12,6 @@ from Students.models import Student
 @api_view(['POST'])
 def getResults(request):
     data = request.data
-    
     try:
         term = Term.objects.get(id=data['term_id'])
         session = AcademicSession.objects.get(id=data['session_id'])
@@ -193,7 +192,7 @@ def updateAnnualResult(request, result_id):
         return Response('Annual Result Record does not exist')
 
 # view for submitting all Students Annual Result for a Subject by the Teacher
-@api_view(['POST'])
+@api_view(['PUT'])
 def postAnnualResults(request):
     data = request.data
     for studentannualrecord in data:
@@ -211,3 +210,16 @@ def postAnnualResults(request):
             pass
     return Response('Annual Results Published Successfully')
 
+# view to unpublish all the Student Annual Results
+@api_view(['PUT'])
+def unpublishAnnualResults(request):
+    data = request.data
+    for studentrecord in data:
+        try:
+            studentresult = AnnualSubjectResult.objects.get(id=studentrecord['id'])
+            studentresult.published = False
+            studentresult.save()
+        except Exception as e:
+            print(str(e))
+            pass
+    return Response('Annual Results Unpublished Successfully')

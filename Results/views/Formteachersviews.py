@@ -162,7 +162,7 @@ def getAnnualResultSummaries(request):
 
 
 # post Students Student Annual Results Summary for a session
-@api_view(['POST'])
+@api_view(['PUT'])
 def postAnnualResultSummaries(request):
     data = request.data
     for student in data:
@@ -178,3 +178,16 @@ def postAnnualResultSummaries(request):
             print(str(e))
             pass
     return Response('Annual Class Results Published Successfully, and now open for viewing')
+
+@api_view(['POST'])
+def unpublishAnnualResultSummaries(request):
+    data = request.data
+    for student in data:
+        try:
+            studentresult = AnnualResultSummary.objects.get(id=student['id'])
+            studentresult.published = False
+            studentresult.save()
+        except Exception as e:
+            print(str(e))
+            pass
+    return Response('Annual Class Results Unpublished Successfully, and now closed for viewing')

@@ -26,6 +26,8 @@ SECRET_KEY = config('SECRET_KEY')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config('DEBUG', default=False, cast=bool)
+DEBUG_ENV = config('DEBUG_ENV', default=False, cast=bool)
+
 
 ALLOWED_HOSTS = ['127.0.0.1','web-production-2f75d.up.railway.app']
 
@@ -122,16 +124,24 @@ CHANNEL_LAYERS = {
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
-DATABASES = {
-    'default': {
+if DEBUG_ENV:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': config('NAME'),
         'USER': config('USER'),
         'PASSWORD': config('PASSWORD'),
         'HOST': config('HOST'),
         'PORT': config('PORT'),
+        }
     }
-}
 
 # DATABASES = {
 #     "default": {
@@ -178,25 +188,24 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.0/howto/static-files/
 
-# STATIC_URL = "/static/"
-# STATIC_ROOT = os.path.join(BASE_DIR, "static")
+if DEBUG_ENV:
+    STATIC_URL = "/static/"
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-# MEDIA_URL= '/media/'
-# MEDIA_ROOT= os.path.join(BASE_DIR,'media')
-
-AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
-AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
-AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
-AWS_S3_CUSTOM_DOMAIN='%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
-AWS_S3_OBJECT_PARAMETERS={'CacheControl':'max-age=86400'}
-AWS_S3_REGION_NAME = 'us-east-1'
-STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
-DEFAULT_FILE_STORAGE='management.storages.MediaStore'
-AWS_LOCATION = 'static'
-STATICFILES_DIRS = [os.path.join(BASE_DIR, "assets"),]
-STATIC_URL='https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN,AWS_LOCATION)
-
-
+    MEDIA_URL= '/media/'
+    MEDIA_ROOT= os.path.join(BASE_DIR,'media')
+else:
+    AWS_ACCESS_KEY_ID = config('AWS_ACCESS_KEY_ID', default='')
+    AWS_SECRET_ACCESS_KEY = config('AWS_SECRET_ACCESS_KEY', default='')
+    AWS_STORAGE_BUCKET_NAME = config('AWS_STORAGE_BUCKET_NAME', default='')
+    AWS_S3_CUSTOM_DOMAIN='%s.s3.amazonaws.com' % AWS_STORAGE_BUCKET_NAME
+    AWS_S3_OBJECT_PARAMETERS={'CacheControl':'max-age=86400'}
+    AWS_S3_REGION_NAME = 'us-east-1'
+    STATICFILES_STORAGE = 'storages.backends.s3boto3.S3Boto3Storage'
+    DEFAULT_FILE_STORAGE='management.storages.MediaStore'
+    AWS_LOCATION = 'static'
+    STATICFILES_DIRS = [os.path.join(BASE_DIR, "assets"),]
+    STATIC_URL='https://%s/%s/' % (AWS_S3_CUSTOM_DOMAIN,AWS_LOCATION)
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
@@ -252,3 +261,5 @@ CKEDITOR_CONFIGS = {
         'colorButton_colors': '000000,ffffff'
     }
 }
+
+DJANGO_IMAGE_URL = config('DJANGO_IMAGE_URL', default='http://127.0.0.1:8000')
