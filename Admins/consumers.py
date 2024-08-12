@@ -7,6 +7,7 @@ from .serializers import NotificationSerializer
 
 class NotificationConsumer(AsyncWebsocketConsumer):
     async def connect(self):
+        print('connected')
         self.room_name = self.scope['url_route']['kwargs']['room_name']
         self.room_group_name = 'notice_%s' % self.room_name
         await self.channel_layer.group_add(
@@ -19,6 +20,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         # Leave room group
+        print('disconnected')
         await self.channel_layer.group_discard(
             self.room_group_name,
             self.channel_name
@@ -43,8 +45,6 @@ class NotificationConsumer(AsyncWebsocketConsumer):
             pass
         except Exception as e:
             print(e)
-
-
 
     # Receive message from room group
     async def notification_message(self, event):

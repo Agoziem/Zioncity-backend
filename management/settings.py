@@ -104,21 +104,21 @@ TEMPLATES = [
 WSGI_APPLICATION = "management.wsgi.application"
 ASGI_APPLICATION = 'management.asgi.application'
 
-# # Channels
-# CHANNEL_LAYERS = {
-#     'default': {
-#         'BACKEND': 'channels.layers.InMemoryChannelLayer'
-#     }
-# }
-
-CHANNEL_LAYERS = {
+if DEBUG_ENV:
+    CHANNEL_LAYERS = {
     'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [config('REDIS_URL')],
+        'BACKEND': 'channels.layers.InMemoryChannelLayer'
+        }
+    }
+else:
+    CHANNEL_LAYERS = {
+        'default': {
+            'BACKEND': 'channels_redis.core.RedisChannelLayer',
+            'CONFIG': {
+                "hosts": [config('REDIS_HOST'),config('REDIS_PORT')],
+            },
         },
-    },
-}
+    }
 
 
 # Database
