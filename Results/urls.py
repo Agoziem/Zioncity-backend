@@ -9,9 +9,10 @@ urlpatterns = [
     # for getting results
     path('getsubjectresult/', get_subject_result, name='getsubjectresult'),
     path('getsubjectresults/', get_subject_results, name='getsubjectresults'),
-    path('getannualresultsummary/', get_annual_result_summary, name='getannualresultsummary'),
-    path('getannualsubjectresult/', get_annual_subject_result, name='getannualsubjectresult'),
-    path('getannualsubjectresults/', get_annual_subject_results, name='getannualsubjectresults'),
+    path('getannualresultsummary/', get_annual_subject_results, name='getannualresultsummary'),
+
+    path('getsubjectannualresult/', get_annual_subject_result, name='getannualsubjectresult'),
+    path('getsubjectannualresults/', get_annual_subject_results, name='getannualsubjectresults'),
     
     # for creating results
     path('getResults/', getResults, name='getResults'),

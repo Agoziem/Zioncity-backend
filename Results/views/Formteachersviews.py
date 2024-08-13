@@ -138,7 +138,7 @@ def getAnnualResultSummaries(request):
                 subject_results = {}
                 for term in ['1st', '2nd', '3rd','Total', "Ave",'published']:  # Assuming terms are fixed
                     try:
-                        subresult = AnnualSubjectResult.objects.get_or_create(student=student, Subject=subject, AcademicSession=session)
+                        subresult,_ = AnnualSubjectResult.objects.get_or_create(student=student, Subject=subject, AcademicSession=session)
                         if term == '1st':
                             subject_results[term] = subresult.FirstTermTotal
                         elif term == '2nd':
@@ -180,7 +180,7 @@ def postAnnualResultSummaries(request):
             pass
     return Response('Annual Class Results Published Successfully, and now open for viewing')
 
-@api_view(['POST'])
+@api_view(['PUT'])
 def unpublishAnnualResultSummaries(request):
     data = request.data
     for student in data:

@@ -29,9 +29,12 @@ def get_newsletter(request, session_id, term_id):
         return Response('Session not found', status=status.HTTP_404_NOT_FOUND)
     except Term.DoesNotExist:
         return Response('Term not found', status=status.HTTP_404_NOT_FOUND)
-    newsletter = Newsletter.objects.get(Newslettersession=session, Newsletterterm=term)
-    serializer = NewsletterSerializer(newsletter, many=False)
-    return Response(serializer.data)
+    try:
+        newsletter = Newsletter.objects.get(Newslettersession=session, Newsletterterm=term)
+        serializer = NewsletterSerializer(newsletter, many=False)
+        return Response(serializer.data)
+    except Newsletter.DoesNotExist:
+        return Response('Newsletter not found', status=status.HTTP_404_NOT_FOUND)
 
 # view to add a newsletter to a particular session & term
 @api_view(['POST'])

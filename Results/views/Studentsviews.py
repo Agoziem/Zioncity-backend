@@ -13,7 +13,6 @@ from rest_framework import status
 def getRoutes(request):
     routes = [
         # for getting results
-
         '/getresultsummary/',
         '/getsubjectresult/',
         '/getsubjectresults/',
@@ -70,7 +69,7 @@ def get_subject_results(request):
             resultsummaryserializer = ResultSummarySerializer(resultsummaryobject, many=False)
             resultsummary = resultsummaryserializer.data
             subjectresults = []
-            results = SubjectResult.objects.filter(student=student, Term=term,AcademicSession=session)
+            results = SubjectResult.objects.filter(student=student, Term=term,AcademicSession=session,published=True)
             for result in results:
                 serializer = SubjectResultSerializer(result, many=False)
                 subjectresults.append(serializer.data)
@@ -84,45 +83,39 @@ def get_subject_results(request):
 
 # //////////////////////////////////////////// Annual Results ////////////////////////////////////////////
 
-@api_view(['POST'])
-def get_annual_result_summary(request):
-    data=request.data
-    try:
-        student = Student.objects.get(id=data['student_id'])
-        session = AcademicSession.objects.get(id=data['session_id'])
-        results = AnnualResultSummary.objects.get(Student_name=student,AcademicSession=session)
-        serializer = AnnualResultSummarySerializer(results, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-    except AnnualResultSummary.DoesNotExist:
-        return Response({'message': 'Annual Result does not exist'}, status=status.HTTP_404_NOT_FOUND)
-
 # view for getting one Subject annual result for a Student
 @api_view(['POST'])
 def get_annual_subject_result(request):
     data=request.data
     try:
         student = Student.objects.get(id=data['student_id'])
-        subject = Subject.objects.get(id=data['subject_id'])
         session = AcademicSession.objects.get(id=data['session_id'])
-        results = AnnualSubjectResult.objects.get(student=student,Subject=subject,AcademicSession=session)
+        subject = Subject.objects.get(id=data['subject_id'])
+        results = AnnualSubjectResult.objects.get(student=student, Subject=subject, AcademicSession=session)
         serializer = AnnualSubjectResultSerializer(results, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
     except AnnualSubjectResult.DoesNotExist:
-        return Response({'message': 'Annual Subject Result does not exist for the Student'}, status=status.HTTP_404_NOT_FOUND)
+        return Response({'message': 'Annual Subject Result does not exist'}, status=status.HTTP_404_NOT_FOUND)
 
 # view for getting all Subject annual results for a Student
 @api_view(['POST'])
 def get_annual_subject_results(request):
     data=request.data
+    AnnualResult = {}
     try:
         student = Student.objects.get(id=data['student_id'])
         session = AcademicSession.objects.get(id=data['session_id'])
+        annualresultsummary = AnnualResultSummary.objects.get(Student_name=student, AcademicSession=session, published=True)
+        annualresultsummaryserializer = AnnualResultSummarySerializer(annualresultsummary, many=False)
         annualsubjectresults = []
-        results = AnnualSubjectResult.objects.filter(student=student, AcademicSession=session)
+        results = AnnualSubjectResult.objects.filter(student=student, AcademicSession=session, published=True)
         for result in results:
             serializer = AnnualSubjectResultSerializer(result, many=False)
             annualsubjectresults.append(serializer.data)
-        return Response(annualsubjectresults, status=status.HTTP_200_OK)
-    except AnnualSubjectResult.DoesNotExist:
+        AnnualResult['annualresultsummary'] = annualresultsummaryserializer.data
+        AnnualResult['annualsubjectresults'] = annualsubjectresults
+        return Response(AnnualResult, status=status.HTTP_200_OK)
+    except Exception as e :
+        print(str(e))
         return Response({'message': 'Annual Subject Results do not exist for the Student'}, status=status.HTTP_404_NOT_FOUND)
     
