@@ -138,7 +138,7 @@ def getAnnualResultSummaries(request):
                 subject_results = {}
                 for term in ['1st', '2nd', '3rd','Total', "Ave",'published']:  # Assuming terms are fixed
                     try:
-                        subresult = AnnualSubjectResult.objects.get(student=student, Subject=subject, AcademicSession=session)
+                        subresult = AnnualSubjectResult.objects.get_or_create(student=student, Subject=subject, AcademicSession=session)
                         if term == '1st':
                             subject_results[term] = subresult.FirstTermTotal
                         elif term == '2nd':
@@ -151,8 +151,9 @@ def getAnnualResultSummaries(request):
                             subject_results[term] = subresult.Average
                         elif term == 'published':
                             subject_results[term] = subresult.published
-                    except AnnualSubjectResult.DoesNotExist:
-                        subject_results[term] = "-"
+                    except Exception as e:
+                        print(str(e))
+                        continue
                 student_dict['subjects'].append({subject.subject_code: subject_results})
             studentAnnualResultSummary.append(student_dict)
         return Response(studentAnnualResultSummary)
