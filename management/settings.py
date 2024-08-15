@@ -55,10 +55,12 @@ INSTALLED_APPS = [
     'EduGPT',
     'Attendance',
     'Payments',
+    'Schedules',
+    'Analytics',
     'rest_framework',
     'rest_framework.authtoken',
     'corsheaders',
-    'ckeditor',
+    'ckeditor'
 ]
 
 MIDDLEWARE = [

@@ -9,7 +9,16 @@ urlpatterns = [
     path("teachersapi/", include("Teachers.urls")),
     path("adminsapi/", include("Admins.urls")),
     path("resultapi/", include("Results.urls")),
-    path("ChatSystem/", include("ChatSystem.urls")),
+    path("chatroomapi/", include("ChatSystem.urls")),
+    path("attendanceapi/", include("Attendance.urls")),
+    path("admissionsapi/", include("Admissions.urls")),
+    path("Authentication/", include("Authentication.urls")),
+    path("cbtapi/", include("CBT.urls")),
+    path("paymentsapi/", include("Payments.urls")),
+    path("schedulesapi/", include("Schedules.urls")),
+    path("analyticsapi/", include("Analytics.urls")),
+    path("elibraryapi/", include("Elibrary.urls")),
+    path("edugptapi/", include("EduGPT.urls")),
 ]
 
 
