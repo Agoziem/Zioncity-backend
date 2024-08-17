@@ -29,7 +29,10 @@ DEBUG = config('DEBUG', default=False, cast=bool)
 DEBUG_ENV = config('DEBUG_ENV', default=False, cast=bool)
 
 
-ALLOWED_HOSTS = ['127.0.0.1','web-production-2f75d.up.railway.app']
+if DEBUG_ENV:
+    ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+else:
+    ALLOWED_HOSTS = ['web-production-2f75d.up.railway.app',"zioncity-frontend-production.up.railway.app"]
 
 
 # Application definition
@@ -103,7 +106,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = "management.wsgi.application"
+# WSGI_APPLICATION = "management.wsgi.application"
 ASGI_APPLICATION = 'management.asgi.application'
 
 if DEBUG_ENV:
@@ -117,7 +120,7 @@ else:
         'default': {
             'BACKEND': 'channels_redis.core.RedisChannelLayer',
             'CONFIG': {
-                "hosts": [config('REDIS_HOST'),config('REDIS_PORT')],
+                "hosts": [(config('REDIS_URL', default='redis://'))],
             },
         },
     }
@@ -145,12 +148,6 @@ else:
         }
     }
 
-# DATABASES = {
-#     "default": {
-#         "ENGINE": "django.db.backends.sqlite3",
-#         "NAME": BASE_DIR / "db.sqlite3",
-#     }
-# }
 
 import dj_database_url
 db_from_env=dj_database_url.config(conn_max_age=600)
