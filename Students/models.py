@@ -1,17 +1,16 @@
 from django.db import models
 import random
-from Admins.models import Class,School
+from Admins.models import AcademicSession, Class,School
 from rest_framework.authtoken.models import Token
 from django.contrib.auth.models import User
 
-# model for students /
+# model for students
 class Student(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE, default=2,blank=True,null=True)
     firstname=models.CharField(max_length=100, blank=True, default="None",null=True)
     surname=models.CharField(max_length=100, blank=True, default="None",null=True)
     othername=models.CharField(max_length=100, blank=True, default="None",null=True)
     sex=models.CharField(max_length=100, blank=True,null=True)
-    student_class=models.ForeignKey(Class, on_delete=models.CASCADE )
     student_id=models.CharField(max_length=100, blank=True,null=True)
     student_pin=models.CharField(max_length=100, blank=True,null=True)
     role = models.CharField(max_length=100, blank=True, default="Student")
@@ -60,3 +59,12 @@ class Student(models.Model):
         except:
             url=''
         return url
+    
+# New Model: StudentClassEnrollment
+class StudentClassEnrollment(models.Model):
+    student = models.ForeignKey("Student", on_delete=models.CASCADE)
+    student_class = models.ForeignKey(Class, on_delete=models.CASCADE)
+    academic_session = models.ForeignKey(AcademicSession, on_delete=models.CASCADE)
+
+    def __str__(self):
+        return f"{self.student.student_name} - {self.student_class.Class} in {self.academic_session.session}"

@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from .serializers import StudentSerializer
-from .models import Student
+from .models import Student, StudentClassEnrollment
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
-from Admins.models import School,Class
+from Admins.models import AcademicSession, School,Class
 from rest_framework import status
 from rest_framework.pagination import PageNumberPagination
 
@@ -50,15 +50,18 @@ def getallStudents(request, school_id):
     
 # get students based on the School ID and Class ID
 @api_view(['GET'])
-def getStudents(request, school_id, class_id):
+def getStudents(request, school_id, class_id, session_id):
     try:
         school = School.objects.get(id=school_id)
         student_class = Class.objects.get(id=class_id)
-        students = Student.objects.filter(student_school=school, student_class=student_class)
-        serializer = StudentSerializer(students, many=True)
+        session = AcademicSession.objects.get(id=session_id)
+        students = StudentClassEnrollment.objects.filter(
+            student_class=student_class, academic_session=session
+        ).select_related('student', 'student__student_school')
+        serializer = StudentSerializer([enrollment.student for enrollment in students], many=True)
         return Response(serializer.data,status=status.HTTP_200_OK)
-    except School.DoesNotExist or Class.DoesNotExist:
-        return Response('School or Class does not exist',status=status.HTTP_404_NOT_FOUND)
+    except School.DoesNotExist or Class.DoesNotExist or AcademicSession.DoesNotExist:
+        return Response('School or Class or Session does not exist',status=status.HTTP_404_NOT_FOUND)
 
 # get Student based on his/her Student ID
 @api_view(['GET'])
@@ -73,26 +76,54 @@ def getStudent(request, student_id):
 
 # create a student based on the School ID and Class ID
 @api_view(['POST'])
-def createStudent(request,school_id, class_id):
+def createStudent(request, school_id, class_id):
     try:
+        data = request.data
         school = School.objects.get(id=school_id)
         student_class = Class.objects.get(id=class_id)
-        data = request.data
-        student = Student.objects.create(
-            firstname=data.get('firstname',''),
-            surname=data.get('surname',''),
-            othername=data.get('othername',''),
-            sex=data.get('sex',''),
-            headshot=data.get('headshot',''),
-            student_school=school,
-            student_class=student_class,
-        )
-        
-        serializer = StudentSerializer(student, many=False)
-        return Response(serializer.data)
-    except School.DoesNotExist or Class.DoesNotExist:
-        return Response('School/Class does not exist in the Database',status=status.HTTP_404_NOT_FOUND)
+        academic_session = AcademicSession.objects.get(id=data.get("academic_session"))
 
+        # Ensure required fields are present
+        if not data.get("firstname") or not data.get("surname"):
+            return Response(
+                {"detail": "Firstname and Surname are required."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
+
+        # Check if the student already exists
+        student, created = Student.objects.get_or_create(
+            firstname=data.get("firstname").strip(),
+            surname=data.get("surname").strip(),
+            sex=data.get("sex", "").strip(),
+            student_school=school,
+            defaults={
+                "othername": data.get("othername", "").strip(),
+                "headshot": data.get("headshot", None),
+            },
+        )
+
+        # Enroll the student in the class and session
+        StudentClassEnrollment.objects.get_or_create(
+            student=student,
+            student_class=student_class,
+            academic_session=academic_session,
+        )
+
+        # Serialize and return the student data
+        serializer = StudentSerializer(student, many=False)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    except (School.DoesNotExist, Class.DoesNotExist):
+        return Response(
+            {"detail": "School or Class does not exist in the database."},
+            status=status.HTTP_404_NOT_FOUND,
+        )
+    except Exception as e:
+        print(str(e))
+        return Response(
+            {"detail": f"An unexpected error occurred: {str(e)}"},
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        )
     
 
 # update a student based on his/her Student ID
@@ -129,7 +160,7 @@ def updateStudent(request, student_id):
 def deleteStudent(request,student_id):
     try:
         student = Student.objects.get(id=student_id)
-        student.delete()
+        StudentClassEnrollment.objects.filter(student=student).delete()
         return Response('Student deleted Successfully',status=status.HTTP_200_OK)
     except Student.DoesNotExist:
         return Response('Student does not exist',status=status.HTTP_404_NOT_FOUND)

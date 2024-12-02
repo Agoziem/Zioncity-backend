@@ -37,6 +37,8 @@ class SubjectAdmin(admin.ModelAdmin):
     search_fields = ('subject_code','subject_name')
     list_filter = ('subject_code','subject_name')
 
+
+
 @admin.register(Subjectallocation)
 class SubjectallocationAdmin(admin.ModelAdmin):
     list_display = ('school','classname')

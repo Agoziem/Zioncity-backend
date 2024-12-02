@@ -5,7 +5,7 @@ from rest_framework import status
 from ..serializers import *
 from ..models import *
 from Admins.models import *
-from Students.models import Student
+from Students.models import Student, StudentClassEnrollment
 
 
 # get all results for a subject in a term and session
@@ -18,11 +18,10 @@ def getResults(request):
         school = School.objects.get(id=data['school_id'])
         student_class = Class.objects.get(id=data['class_id'])
         subject = Subject.objects.get(id=data['subject_id'])
-
-        studentsinclass = Student.objects.filter(student_class=student_class,student_school=school)
+        studentsinclass = StudentClassEnrollment.objects.filter(academic_session=session,student_class=student_class)
         studentsubjectResults = []
         for student in studentsinclass:
-            studentresult,created = SubjectResult.objects.get_or_create(student=student,Subject=subject,Term=term,AcademicSession=session,student_class=student_class,student_school=school)
+            studentresult,created = SubjectResult.objects.get_or_create(student=student.student,Subject=subject,Term=term,AcademicSession=session,student_class=student_class,student_school=school)
             studentsubjectResults.append({
                 'id': studentresult.id,
                 'firstname': studentresult.student.firstname,
@@ -44,7 +43,6 @@ def getResults(request):
                 'SubjectPosition': studentresult.SubjectPosition,
                 'Remark': studentresult.Remark,
                 'published': studentresult.published
-
             })
         return Response(studentsubjectResults, status=status.HTTP_200_OK)
     except:
@@ -131,10 +129,10 @@ def getAnnualResults(request):
         school = School.objects.get(id=data['school_id'])
         student_class = Class.objects.get(id=data['class_id'])
         subjectannual = Subject.objects.get(id=data['subject_id'])
-        studentsinclass = Student.objects.filter(student_class=student_class,student_school=school)
+        studentsinclass = StudentClassEnrollment.objects.filter(academic_session=session,student_class=student_class)
         studentssubjectAnnualResult = []
         for student in studentsinclass: 
-            termlystudentresults = SubjectResult.objects.filter(student=student,Subject=subjectannual,AcademicSession=session)
+            termlystudentresults = SubjectResult.objects.filter(student=student.student,Subject=subjectannual,AcademicSession=session)
             for result in termlystudentresults:
                 if result.Term.term == '1st Term':
                     firsttermresult = result.Total

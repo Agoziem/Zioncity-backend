@@ -32,6 +32,7 @@ class NotificationConsumer(AsyncWebsocketConsumer):
         message = text_data_json['notification']
         # update the database
         await self.update_notification(message)
+        
 
 
     @database_sync_to_async

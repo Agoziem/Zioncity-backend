@@ -120,6 +120,7 @@ class Administrator(models.Model):
 				if not object_with_similar_admin_id:
 					self.admin_id = admin_id
 			super().save(*args, **kwargs)
+		
 
 # allocates subjects to classes
 class Subjectallocation(models.Model):
@@ -129,6 +130,7 @@ class Subjectallocation(models.Model):
 
 	def __str__(self):
 		return f"subjects allocated to {self.classname} {self.school.Schoolname} "
+
 	
 
 class Newsletter(models.Model):

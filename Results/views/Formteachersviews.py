@@ -5,7 +5,7 @@ from rest_framework import status
 from ..serializers import *
 from ..models import *
 from Admins.models import *
-from Students.models import Student
+from Students.models import Student, StudentClassEnrollment
 
 # //////////////////////////////////////////// Formteachers Results Summary ////////////////////////////////////////////
 
@@ -13,24 +13,23 @@ from Students.models import Student
 @api_view(['POST'])
 def getResultSummaries(request):
     data = request.data
-    print(data)
     term = Term.objects.get(id=data['term_id'])
     session = AcademicSession.objects.get(id=data['session_id'])
     school = School.objects.get(id=data['school_id'])
     student_class = Class.objects.get(id=data['class_id'])
-    studentsinclass = Student.objects.filter(student_class=student_class, student_school=school)
+    studentsinclass = StudentClassEnrollment.objects.filter(academic_session=session,student_class=student_class)
     totalnumber = len(studentsinclass)
     try:
         classsubjectsallocations = Subjectallocation.objects.get(classname=student_class, school=school)
         studentResultSummary = []
         for student in studentsinclass:
-            resultsummary, created = ResultSummary.objects.get_or_create(Student_name=student, Term=term,
+            resultsummary, created = ResultSummary.objects.get_or_create(Student_name=student.student, Term=term,
                                                                          AcademicSession=session)
             student_dict = {
                 'id': resultsummary.id,
-                'firstname': student.firstname,
-                'surname': student.surname,
-                'middlename': student.othername,
+                'firstname': student.student.firstname,
+                'surname': student.student.surname,
+                'middlename': student.student.othername,
                 'TotalScore': resultsummary.TotalScore,
                 'Totalnumber': totalnumber,
                 'Average': resultsummary.Average,
@@ -44,7 +43,7 @@ def getResultSummaries(request):
 
             for subject in classsubjectsallocations.subjects.all():
                 try:
-                    subresult = SubjectResult.objects.get(student=student, student_class=student_class,
+                    subresult = SubjectResult.objects.get(student=student.student, student_class=student_class,
                                                            Subject=subject, Term=term, AcademicSession=session)
                     # Append subject total score to the subjects_total list
                     subjects_total.append({
@@ -115,18 +114,18 @@ def getAnnualResultSummaries(request):
     session = AcademicSession.objects.get(id=data['session_id'])
     school = School.objects.get(id=data['school_id'])
     student_class = Class.objects.get(id=data['class_id'])
-    studentsinclass = Student.objects.filter(student_class=student_class,student_school=school)
+    studentsinclass = StudentClassEnrollment.objects.filter(academic_session=session,student_class=student_class)
     totalnumberinclass = len(studentsinclass)
     classsubjectsallocations = Subjectallocation.objects.get(classname=student_class,school=school)
     studentAnnualResultSummary = []
     try:
         for student in studentsinclass:
-            studentannualsummary,created = AnnualResultSummary.objects.get_or_create(Student_name=student,AcademicSession=session)
+            studentannualsummary,created = AnnualResultSummary.objects.get_or_create(Student_name=student.student,AcademicSession=session)
             student_dict = {
                 'id': studentannualsummary.id,
-                'firstname': student.firstname,
-                'surname': student.surname,
-                'middlename': student.othername,
+                'firstname': student.student.firstname,
+                'surname': student.student.surname,
+                'middlename': student.student.othername,
                 'subjects':[],
                 'TotalScore': studentannualsummary.TotalScore,
                 'Totalnumber': totalnumberinclass,
@@ -138,7 +137,7 @@ def getAnnualResultSummaries(request):
                 subject_results = {}
                 for term in ['1st', '2nd', '3rd','Total', "Ave",'published']:  # Assuming terms are fixed
                     try:
-                        subresult,_ = AnnualSubjectResult.objects.get_or_create(student=student, Subject=subject, AcademicSession=session)
+                        subresult,_ = AnnualSubjectResult.objects.get_or_create(student=student.student, Subject=subject, AcademicSession=session)
                         if term == '1st':
                             subject_results[term] = subresult.FirstTermTotal
                         elif term == '2nd':
