@@ -36,12 +36,13 @@ def confirmStudent(request):
 
 # get all students based on the School ID by pagination
 @api_view(['GET'])
-def getallStudents(request, school_id):
+def getallStudents(request,session_id):
     try:
         paginator = PageNumberPagination()
         paginator.page_size = 21 
-        school = School.objects.get(id=school_id)
-        students = Student.objects.filter(student_school=school)
+        sessionobject =AcademicSession.objects.get(id=session_id)
+        studentenrollment = StudentClassEnrollment.objects.filter(academic_session = sessionobject)
+        students = [enrollment.student for enrollment in studentenrollment]
         result_page = paginator.paginate_queryset(students, request)
         serializer = StudentSerializer(result_page, many=True)
         return paginator.get_paginated_response(serializer.data)
