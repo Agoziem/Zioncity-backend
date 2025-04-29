@@ -32,7 +32,7 @@ DEBUG_ENV = config('DEBUG_ENV', default=False, cast=bool)
 if DEBUG_ENV:
     ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
 else:
-    ALLOWED_HOSTS = ['web-production-2f75d.up.railway.app',"zioncity-frontend-production.up.railway.app"]
+    ALLOWED_HOSTS = ['web-production-2f75d.up.railway.app',"zioncity-frontend-production.up.railway.app","api.cityofgloryintlschool.com"]
 
 
 # Application definition
@@ -77,7 +77,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-CSRF_TRUSTED_ORIGINS = ['web-production-2f75d.up.railway.app']
+CSRF_TRUSTED_ORIGINS = ['web-production-2f75d.up.railway.app','api.cityofgloryintlschool.com']
 
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
