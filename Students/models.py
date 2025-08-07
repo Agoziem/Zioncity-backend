@@ -24,7 +24,7 @@ class Student(models.Model):
 
     # save method to generate student_id and student_pin
     def save(self, *args, **kwargs):
-        if not self.id: 
+        if not self.pk: 
             attempts = 0
             while attempts < 5:  # Limit the number of attempts to avoid infinite loop
                 random_pin = str(random.randint(1000, 9999))
